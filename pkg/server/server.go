@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/gorilla/mux"
-	"github.com/loukaspe/platform-go-challenge/pkg/logger"
+	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"net/http"

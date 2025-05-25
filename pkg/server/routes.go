@@ -1,10 +1,10 @@
 package server
 
 import (
-	"github.com/loukaspe/platform-go-challenge/internal/core/services"
-	"github.com/loukaspe/platform-go-challenge/internal/handlers"
+	"github.com/loukaspe/jedi-team-challenge/internal/core/services"
+	"github.com/loukaspe/jedi-team-challenge/internal/handlers"
 
-	"github.com/loukaspe/platform-go-challenge/pkg/auth"
+	"github.com/loukaspe/jedi-team-challenge/pkg/auth"
 	"net/http"
 	"os"
 )

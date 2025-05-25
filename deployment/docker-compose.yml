@@ -24,7 +24,7 @@ services:
     ports:
       - "5050:80"
   app:
-#    container_name: platform-go-challenge-app
+#    container_name: jedi-team-challenge-app
     build:
       context: ..
       dockerfile: ./build/Dockerfile.dev

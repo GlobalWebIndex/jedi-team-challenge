@@ -2,7 +2,7 @@ package services
 
 import (
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/loukaspe/platform-go-challenge/internal/core/domain"
+	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 )
 
 type JwtService struct {

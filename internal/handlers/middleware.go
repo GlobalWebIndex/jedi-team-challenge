@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/loukaspe/platform-go-challenge/internal/core/domain"
+	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	"net/http"
 	"strings"
 )

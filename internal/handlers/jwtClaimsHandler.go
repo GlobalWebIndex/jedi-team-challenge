@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/loukaspe/platform-go-challenge/internal/core/domain"
-	"github.com/loukaspe/platform-go-challenge/internal/core/services"
-	"github.com/loukaspe/platform-go-challenge/pkg/logger"
+	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
+	"github.com/loukaspe/jedi-team-challenge/internal/core/services"
+	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	"net/http"
 )
 
