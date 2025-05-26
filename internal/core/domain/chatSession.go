@@ -15,9 +15,9 @@ type ChatSession struct {
 }
 
 type Message struct {
-	ID        uuid.UUID
-	SessionID uuid.UUID
-	Sender    string
-	Content   string
-	Timestamp time.Time
+	ID            uuid.UUID
+	ChatSessionID uuid.UUID
+	Sender        string
+	Content       string
+	Timestamp     time.Time
 }

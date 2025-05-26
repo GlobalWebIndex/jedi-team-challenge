@@ -67,6 +67,7 @@ func getDB() *gorm.DB {
 	// Drops added in order to start with clean DB on App start for
 	// assessment reasons
 	db.Migrator().DropTable("users")
+	db.Migrator().DropTable("messages")
 	db.Migrator().DropTable("chat_sessions")
 
 	err = db.AutoMigrate(&repositories.User{})
@@ -76,7 +77,7 @@ func getDB() *gorm.DB {
 
 	// TODO: remove
 	admin := repositories.User{
-		ID:       uuid.New(),
+		ID:       uuid.UUID{0x12, 0x34, 0x56, 0x78},
 		Username: "loukas",
 		Password: "loukastest",
 	}
@@ -89,6 +90,11 @@ func getDB() *gorm.DB {
 	err = db.AutoMigrate(&repositories.ChatSession{})
 	if err != nil {
 		log.Fatal("cannot migrate chat sessions table")
+	}
+
+	err = db.AutoMigrate(&repositories.Message{})
+	if err != nil {
+		log.Fatal("cannot migrate messages table")
 	}
 
 	return db

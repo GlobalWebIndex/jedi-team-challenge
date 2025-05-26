@@ -10,6 +10,7 @@ import (
 
 type ChatSessionServiceInterface interface {
 	GetChatSession(context.Context, uuid.UUID) (*domain.ChatSession, error)
+	GetUserChatSessions(context.Context, uuid.UUID) ([]*domain.ChatSession, error)
 	CreateChatSession(context.Context, *domain.ChatSession) (uuid.UUID, error)
 	UpdateChatSessionTitle(context.Context, uuid.UUID, string) error
 	DeleteChatSession(context.Context, uuid.UUID) error
@@ -44,4 +45,8 @@ func (s ChatSessionService) DeleteChatSession(ctx context.Context, uuid uuid.UUI
 
 func (s ChatSessionService) GetChatSession(ctx context.Context, uuid uuid.UUID) (*domain.ChatSession, error) {
 	return s.repository.GetChatSession(ctx, uuid)
+}
+
+func (s ChatSessionService) GetUserChatSessions(ctx context.Context, uuid uuid.UUID) ([]*domain.ChatSession, error) {
+	return s.repository.GetUserChatSessions(ctx, uuid)
 }

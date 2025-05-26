@@ -11,13 +11,13 @@ type ChatSession struct {
 	Title     string    `gorm:"type:text"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
-	Messages  []Message `gorm:"foreignKey:SessionID;constraint:OnDelete:CASCADE"`
+	Messages  []Message
 }
 
 type Message struct {
-	ID        uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
-	SessionID uuid.UUID `gorm:"type:uuid;not null;index"`
-	Sender    string    `gorm:"type:text;not null"`
-	Content   string    `gorm:"type:text;not null"`
-	Timestamp time.Time `gorm:"not null"`
+	ID            uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
+	ChatSessionID uuid.UUID `gorm:"type:uuid;not null;index"`
+	Sender        string    `gorm:"type:text;not null"`
+	Content       string    `gorm:"type:text;not null"`
+	Timestamp     time.Time `gorm:"not null"`
 }

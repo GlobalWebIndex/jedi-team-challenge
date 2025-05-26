@@ -85,6 +85,21 @@ func (mr *MockChatSessionServiceInterfaceMockRecorder) GetChatSession(arg0, arg1
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChatSession", reflect.TypeOf((*MockChatSessionServiceInterface)(nil).GetChatSession), arg0, arg1)
 }
 
+// GetUserChatSessions mocks base method.
+func (m *MockChatSessionServiceInterface) GetUserChatSessions(arg0 context.Context, arg1 uuid.UUID) ([]*domain.ChatSession, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserChatSessions", arg0, arg1)
+	ret0, _ := ret[0].([]*domain.ChatSession)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserChatSessions indicates an expected call of GetUserChatSessions.
+func (mr *MockChatSessionServiceInterfaceMockRecorder) GetUserChatSessions(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserChatSessions", reflect.TypeOf((*MockChatSessionServiceInterface)(nil).GetUserChatSessions), arg0, arg1)
+}
+
 // UpdateChatSessionTitle mocks base method.
 func (m *MockChatSessionServiceInterface) UpdateChatSessionTitle(arg0 context.Context, arg1 uuid.UUID, arg2 string) error {
 	m.ctrl.T.Helper()
