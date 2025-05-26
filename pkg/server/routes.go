@@ -3,15 +3,34 @@ package server
 import (
 	"github.com/loukaspe/jedi-team-challenge/internal/core/services"
 	"github.com/loukaspe/jedi-team-challenge/internal/handlers"
+	"github.com/loukaspe/jedi-team-challenge/internal/handlers/chatSessions"
+	"github.com/loukaspe/jedi-team-challenge/internal/repositories"
 
 	"github.com/loukaspe/jedi-team-challenge/pkg/auth"
 	"net/http"
 	"os"
 )
 
+//	@title			Louk Chatwalker
+//	@version		1.0
+//	@description	GWI's Jedi Team Challenge
+
+//	@host		localhost:8080
+//	@BasePath	/
+
+//	@contact.name	Loukas Peteinaris
+//	@contact.url	loukas.peteinaris@gmail.com
+
+//	@securityDefinitions.apikey	BearerAuth
+//	@in							header
+//	@name						Authorization
+//	@description				Header value should be in the form of `Bearer <JWT access token>`
+
+// @accept		json
+// @produce	json
 func (s *Server) initializeRoutes() {
 	// health check
-	healthCheckHandler := handlers.NewHealthCheckHandler()
+	healthCheckHandler := handlers.NewHealthCheckHandler(s.DB)
 	s.router.HandleFunc("/health-check", healthCheckHandler.HealthCheckController).Methods("GET")
 
 	// auth
@@ -28,6 +47,11 @@ func (s *Server) initializeRoutes() {
 	protected := s.router.PathPrefix("/").Subrouter()
 	protected.Use(jwtMiddleware.AuthenticationMW)
 
-	//protected.HandleFunc("/users/{user_id:[0-9]+}/favourites", createUserFavouriteHandler.AddUserFavouriteAssetController).Methods("POST")
+	chatSessionRepository := repositories.NewChatSessionRepository(s.DB)
+	chatSessionService := services.NewChatSessionService(s.logger, chatSessionRepository)
+
+	createChatSessionHandler := chatSessions.NewCreateUserChatSessionHandler(chatSessionService, s.logger)
+
+	protected.HandleFunc("/users/{user_id}/chat-sessions", createChatSessionHandler.CreateUserChatSessionAssetController).Methods("POST")
 
 }

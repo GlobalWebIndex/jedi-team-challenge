@@ -5,18 +5,18 @@ import (
 	"strings"
 )
 
-type TiktokenChunker struct {
+type Chunker struct {
 	Encoder           *tiktoken.Tiktoken
 	MaxTokensPerChunk int
 }
 
 // TiktokenEncoding  string
 // enc, err := tiktoken.GetEncoding(encName)
-func NewTiktokenChunker(encoder *tiktoken.Tiktoken, maxTokens int) (*TiktokenChunker, error) {
-	return &TiktokenChunker{Encoder: encoder, MaxTokensPerChunk: maxTokens}, nil
+func NewChunker(encoder *tiktoken.Tiktoken, maxTokens int) (*Chunker, error) {
+	return &Chunker{Encoder: encoder, MaxTokensPerChunk: maxTokens}, nil
 }
 
-func (c *TiktokenChunker) Chunk(text string) []string {
+func (c *Chunker) Chunk(text string) []string {
 	var chunks []string
 	sentences := splitToSentences(text)
 
