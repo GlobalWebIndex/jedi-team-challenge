@@ -27,7 +27,7 @@ services:
 #    container_name: jedi-team-challenge-app
     build:
       context: ..
-      dockerfile: ./build/Dockerfile.dev
+      dockerfile: ./build/Dev.Dockerfile
     ports:
       - "8080:8080"
       - "40000:40000"

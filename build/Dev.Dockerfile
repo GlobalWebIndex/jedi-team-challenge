@@ -1,4 +1,4 @@
-FROM golang:1.19.3-alpine3.16 as builder
+FROM golang:1.24.3-alpine3.21 as builder
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ RUN go mod download
 RUN go install github.com/joho/godotenv/cmd/godotenv@v1.4.0
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
 
-FROM golang:1.19.3-alpine3.16
+FROM golang:1.24.3-alpine3.21
 
 RUN apk update
 RUN apk add build-base bash

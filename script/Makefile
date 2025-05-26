@@ -47,13 +47,23 @@ run-linter:
 			--workdir /app \
 			dev-build golangci-lint run --config ./config/.golangci.yml ./...
 
-generate-swagger-files:
+swag-fmt:
+#	swag fmt -g ../../pkg/server/routes.go -d ../internal/handlers
 	make build-dev
 	@docker run \
-			--rm \
-			--volume "$(PWD)"/../:/app \
-			--workdir /app \
-			dev-build swagger generate spec -o ./docs/swagger.json --scan-models
+			  --rm \
+			  --volume "$(PWD)"/../:/app \
+			  --workdir /app \
+			  dev-build swag fmt -g ../../pkg/server/routes.go -d ./internal/handlers
+
+swag: swag-fmt
+	#swag init -g ../../pkg/server/routes.go -d ../internal/handlers -o ../docs/swagger --parseDependency --parseDepth 1
+	make build-dev
+	@docker run \
+    			--rm \
+    			--volume "$(PWD)"/../:/app \
+    			--workdir /app \
+				dev-build swag init -g ../../pkg/server/routes.go -d ./internal/handlers -o ./docs/swagger --parseDependency --parseDepth 1
 
 start-app:
 	docker-compose --file ../deployment/docker-compose.yml down
@@ -70,7 +80,7 @@ rebuild-app:
 build-dev:
 	@docker build \
 			--tag dev-build \
-			-f ../build/Dockerfile.utilities ..
+			-f ../build/Utilities.Dockerfile ..
 
 migrate-data-small:
 	@docker run \

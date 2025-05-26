@@ -1,4 +1,4 @@
-FROM golang:1.19.3-alpine3.16
+FROM golang:1.24.3-alpine3.21
 
 # Install git
 
@@ -16,4 +16,4 @@ COPY .. .
 RUN go install github.com/golang/mock/mockgen@v1.6.0
 RUN go install github.com/joho/godotenv/cmd/godotenv@v1.4.0
 RUN wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.50.1
-RUN go install github.com/go-swagger/go-swagger/cmd/swagger@v0.30.4
+RUN go install github.com/swaggo/swag/cmd/swag@latest

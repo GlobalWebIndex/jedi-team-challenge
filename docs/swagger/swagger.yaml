@@ -1,0 +1,80 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  chatSessions.ChatSessionResponse:
+    properties:
+      createdAt:
+        type: string
+      errorMessage:
+        type: string
+      id:
+        type: string
+      messages:
+        items:
+          $ref: '#/definitions/chatSessions.Message'
+        type: array
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  chatSessions.Message:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      sender:
+        example: USER
+        type: string
+      timestamp:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: Loukas Peteinaris
+    url: loukas.peteinaris@gmail.com
+  description: GWI's Jedi Team Challenge
+  title: Louk Chatwalker
+  version: "1.0"
+paths:
+  /users/user_id/chat-sessions:
+    post:
+      description: Creates a chat session for User
+      parameters:
+      - description: user id
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "400":
+          description: Error in message payload
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "401":
+          description: Authentication error
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+      security:
+      - BearerAuth: []
+      summary: Creates chat session
+produces:
+- application/json
+securityDefinitions:
+  BearerAuth:
+    description: Header value should be in the form of `Bearer <JWT access token>`
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
