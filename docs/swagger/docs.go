@@ -24,7 +24,97 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/chat-sessions/session_id": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Gets chat session",
+                "summary": "Gets chat session",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "session id",
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in message payload",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users/user_id/chat-sessions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Gets all User's chat sessions",
+                "summary": "Gets all User's chat sessions",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.UserChatSessionsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in message payload",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.UserChatSessionsResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.UserChatSessionsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.UserChatSessionsResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -69,6 +159,70 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/user_id/chat-sessions/session_id/messages": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Sends message to a given chat session and gets response",
+                "summary": "Sends message to a given chat session and gets response",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "SendMessageRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageRequest"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "user id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "session id",
+                        "name": "session_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in message payload",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -87,7 +241,7 @@ const docTemplate = `{
                 "messages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/chatSessions.Message"
+                        "$ref": "#/definitions/chatSessions.MessageResponse"
                     }
                 },
                 "title": {
@@ -98,21 +252,60 @@ const docTemplate = `{
                 }
             }
         },
-        "chatSessions.Message": {
+        "chatSessions.MessageResponse": {
             "type": "object",
             "properties": {
                 "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "errorMessage": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
                 "sender": {
-                    "type": "string",
-                    "example": "USER"
-                },
-                "timestamp": {
                     "type": "string"
+                }
+            }
+        },
+        "chatSessions.SendMessageRequest": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "UserID    string ` + "`" + `json:\"chatSessionID\"` + "`" + `\nSessionID string ` + "`" + `json:\"sessionId\"` + "`" + `",
+                    "type": "string"
+                }
+            }
+        },
+        "chatSessions.SendMessageResponse": {
+            "type": "object",
+            "properties": {
+                "errorMessage": {
+                    "type": "string"
+                },
+                "systemMessage": {
+                    "$ref": "#/definitions/chatSessions.MessageResponse"
+                },
+                "userMessage": {
+                    "$ref": "#/definitions/chatSessions.MessageResponse"
+                }
+            }
+        },
+        "chatSessions.UserChatSessionsResponse": {
+            "type": "object",
+            "properties": {
+                "errorMessage": {
+                    "type": "string"
+                },
+                "sessions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                    }
                 }
             }
         }

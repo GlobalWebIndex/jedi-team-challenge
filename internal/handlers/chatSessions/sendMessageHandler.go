@@ -30,12 +30,12 @@ func NewSendMessageHandler(
 // @Description	Sends message to a given chat session and gets response
 // @Security		BearerAuth
 // @Param			SendMessageRequest	body		SendMessageRequest	true	"request body"
-// @Param			user_id	path		int	true	"user id"
-// @Param			session_id	body		int	true	"session id"
-// @Success		201		{object}	MessageResponse
-// @Failure		400		{object}	MessageResponse	"Error in message payload"
-// @Failure		401		{object}	MessageResponse	"Authentication error"
-// @Failure		500		{object}	MessageResponse	"Internal Server Error"
+// @Param			user_id				path		int					true	"user id"
+// @Param			session_id			body		int					true	"session id"
+// @Success		201					{object}	SendMessageResponse
+// @Failure		400					{object}	SendMessageResponse	"Error in message payload"
+// @Failure		401					{object}	SendMessageResponse	"Authentication error"
+// @Failure		500					{object}	SendMessageResponse	"Internal Server Error"
 // @Router			/users/user_id/chat-sessions/session_id/messages [post]
 func (handler *SendMessageHandler) SendMessageController(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")

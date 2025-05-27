@@ -12,24 +12,51 @@ definitions:
         type: string
       messages:
         items:
-          $ref: '#/definitions/chatSessions.Message'
+          $ref: '#/definitions/chatSessions.MessageResponse'
         type: array
       title:
         type: string
       updatedAt:
         type: string
     type: object
-  chatSessions.Message:
+  chatSessions.MessageResponse:
     properties:
       content:
+        type: string
+      created_at:
+        type: string
+      errorMessage:
         type: string
       id:
         type: string
       sender:
-        example: USER
         type: string
-      timestamp:
+    type: object
+  chatSessions.SendMessageRequest:
+    properties:
+      content:
+        description: |-
+          UserID    string `json:"chatSessionID"`
+          SessionID string `json:"sessionId"`
         type: string
+    type: object
+  chatSessions.SendMessageResponse:
+    properties:
+      errorMessage:
+        type: string
+      systemMessage:
+        $ref: '#/definitions/chatSessions.MessageResponse'
+      userMessage:
+        $ref: '#/definitions/chatSessions.MessageResponse'
+    type: object
+  chatSessions.UserChatSessionsResponse:
+    properties:
+      errorMessage:
+        type: string
+      sessions:
+        items:
+          $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        type: array
     type: object
 host: localhost:8080
 info:
@@ -40,7 +67,64 @@ info:
   title: Louk Chatwalker
   version: "1.0"
 paths:
+  /chat-sessions/session_id:
+    get:
+      description: Gets chat session
+      parameters:
+      - description: session id
+        in: path
+        name: session_id
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "400":
+          description: Error in message payload
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "401":
+          description: Authentication error
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+      security:
+      - BearerAuth: []
+      summary: Gets chat session
   /users/user_id/chat-sessions:
+    get:
+      description: Gets all User's chat sessions
+      parameters:
+      - description: user id
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/chatSessions.UserChatSessionsResponse'
+        "400":
+          description: Error in message payload
+          schema:
+            $ref: '#/definitions/chatSessions.UserChatSessionsResponse'
+        "401":
+          description: Authentication error
+          schema:
+            $ref: '#/definitions/chatSessions.UserChatSessionsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/chatSessions.UserChatSessionsResponse'
+      security:
+      - BearerAuth: []
+      summary: Gets all User's chat sessions
     post:
       description: Creates a chat session for User
       parameters:
@@ -69,6 +153,47 @@ paths:
       security:
       - BearerAuth: []
       summary: Creates chat session
+  /users/user_id/chat-sessions/session_id/messages:
+    post:
+      description: Sends message to a given chat session and gets response
+      parameters:
+      - description: request body
+        in: body
+        name: SendMessageRequest
+        required: true
+        schema:
+          $ref: '#/definitions/chatSessions.SendMessageRequest'
+      - description: user id
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: session id
+        in: body
+        name: session_id
+        required: true
+        schema:
+          type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/chatSessions.SendMessageResponse'
+        "400":
+          description: Error in message payload
+          schema:
+            $ref: '#/definitions/chatSessions.SendMessageResponse'
+        "401":
+          description: Authentication error
+          schema:
+            $ref: '#/definitions/chatSessions.SendMessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/chatSessions.SendMessageResponse'
+      security:
+      - BearerAuth: []
+      summary: Sends message to a given chat session and gets response
 produces:
 - application/json
 securityDefinitions:
