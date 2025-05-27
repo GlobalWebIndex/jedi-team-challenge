@@ -1,9 +1,16 @@
-POST http://localhost:8080/token
+# curl --location 'localhost:8080/token'
+#--header 'Content-Type: application/json'
+#--data '{
+#    "username": "user",
+#    "password": "password"
+#}'
+POST localhost:8080/token
 Content-Type: application/json
 
 {
-  "username": "username",
+  "username": "user",
   "password": "password"
 }
 
 ###
+

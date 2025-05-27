@@ -1,0 +1,7 @@
+# curl --location 'localhost:8080/users/12345678-0000-0000-0000-000000000000/chat-sessions'
+#--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNzQ4MzUxODc0LCJVc2VySW5mbyI6eyJVc2VybmFtZSI6InVzZXIiLCJQYXNzd29yZCI6InBhc3N3b3JkIn19.U_aeQ2PCjSnUCnOUy80k8QELoOIIquLOUVpm_6hmVs8'
+GET localhost:8080/users/12345678-0000-0000-0000-000000000000/chat-sessions
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNzQ4MzUxODc0LCJVc2VySW5mbyI6eyJVc2VybmFtZSI6InVzZXIiLCJQYXNzd29yZCI6InBhc3N3b3JkIn19.U_aeQ2PCjSnUCnOUy80k8QELoOIIquLOUVpm_6hmVs8
+
+###
+
