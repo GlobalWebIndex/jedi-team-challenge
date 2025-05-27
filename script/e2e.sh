@@ -44,25 +44,35 @@ for i in {1..3}; do
 done
 
 # Step 3: Send the first message
-message_content_1="what do you know about gen z in nashville"
+message_content_1="what do you know about latino mobile gamers"
 response_message_1=$(curl -s --location "$BASE_URL/users/$USER_ID/chat-sessions/$CHAT_SESSION_ID/messages" \
   --header "Content-Type: application/json" \
   --header "Authorization: Bearer $token" \
   --data "{\"content\":\"$message_content_1\"}")
 
 # Step 4: Send the second message
-message_content_2="what do you know about latino mobile gamers"
+message_content_2="do they use social media"
 response_message_2=$(curl -s --location "$BASE_URL/users/$USER_ID/chat-sessions/$CHAT_SESSION_ID/messages" \
   --header "Content-Type: application/json" \
   --header "Authorization: Bearer $token" \
   --data "{\"content\":\"$message_content_2\"}")
 
-# Step 5: Display the responses from sending the messages
-echo "Message 1 sent to chat session $CHAT_SESSION_ID:"
-echo "$response_message_1"
+# Step 4.5: Send the third message
+message_content_3="what social media do they use the most"
+response_message_3=$(curl -s --location "$BASE_URL/users/$USER_ID/chat-sessions/$CHAT_SESSION_ID/messages" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: Bearer $token" \
+  --data "{\"content\":\"$message_content_3\"}")
 
-echo "Message 2 sent to chat session $CHAT_SESSION_ID:"
-echo "$response_message_2"
+## Step 5: Display the responses from sending the messages
+#echo "Message 1 sent to chat session $CHAT_SESSION_ID:"
+#echo "$response_message_1"
+#
+#echo "Message 2 sent to chat session $CHAT_SESSION_ID:"
+#echo "$response_message_2"
+#
+#echo "Message 3 sent to chat session $CHAT_SESSION_ID:"
+#echo "$response_message_3"
 
 # Step 6: Fetch and display the whole chat session
 echo "Fetching the entire chat session $CHAT_SESSION_ID..."
