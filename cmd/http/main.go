@@ -11,8 +11,10 @@ import (
 	"github.com/loukaspe/jedi-team-challenge/pkg/embeddings"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	"github.com/loukaspe/jedi-team-challenge/pkg/server"
+	"github.com/loukaspe/jedi-team-challenge/pkg/vectordb"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
+	"github.com/pinecone-io/go-pinecone/v3/pinecone"
 	"github.com/pkoukk/tiktoken-go"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
@@ -29,8 +31,9 @@ func main() {
 	client := getOpenAIClient()
 	chunker := getChunker(encoder)
 	embedder := getEmbedder(&client)
+	pineconeVectorDB := getPineconeVectorDB()
 
-	inputKnowledgeBase(chunker, embedder)
+	inputKnowledgeBase(chunker, embedder, pineconeVectorDB)
 
 	logger := logger.NewLogger(context.Background())
 	router := mux.NewRouter()
@@ -40,7 +43,7 @@ func main() {
 	}
 	db := getDB()
 
-	server := server.NewServer(db, router, httpServer, logger)
+	server := server.NewServer(db, router, httpServer, logger, &client, embedder, pineconeVectorDB)
 
 	server.Run()
 }
@@ -141,43 +144,52 @@ func getOpenAIClient() openai.Client {
 	return openai.NewClient(option.WithAPIKey(os.Getenv("OPENAI_API_KEY")))
 }
 
-func inputKnowledgeBase(chunker *chunks.Chunker, embedder *embeddings.EmbeddingService) {
+func getPineconeVectorDB() *vectordb.PineconeVectorDB {
+	topKResultsNumberAsString := os.Getenv("TOP_K_RESULTS_NUMBER")
+	topKResultsNumber, err := strconv.Atoi(topKResultsNumberAsString)
+	if err != nil {
+		log.Fatal("Cannot read top k results number: ", err)
+	}
 
-	//textBytes, err := os.ReadFile("./data.md")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//text := string(textBytes)
-	//
-	//chunks := chunker.Chunk(text)
-	//fmt.Printf("Generated %d chunks\n", len(chunks))
-	//
-	//ctx := context.Background()
-	//embeddings, err := embedder.Embed(ctx, chunks)
-	//if err != nil {
-	//	log.Fatalf("Embedding error: %v", err)
-	//}
-	//
-	//// Output
-	//for i, emb := range embeddings {
-	//	fmt.Printf("Chunk %d → %d-dim vector\n", i, len(emb))
-	//}
-	//
-	//pineconeClient, err := pinecone.NewClient(pinecone.NewClientParams{
-	//	ApiKey: os.Getenv("PINECONE_API_KEY"),
-	//})
-	//if err != nil {
-	//	log.Fatalf("Failed to create pinecone Client: %v", err)
-	//}
-	//pineconeVectorDB := vectordb.NewPineconeVectorDB(
-	//	os.Getenv("PINECONE_INDEX"),
-	//	pineconeClient,
-	//)
-	//
-	//count, err := pineconeVectorDB.StoreEmbeddings(ctx, embeddings)
-	//if err != nil {
-	//	log.Fatalf("Failed to store embeddings: %v", err)
-	//}
-	//
-	//fmt.Sprintf("Stored %d embeddings in Pinecone index %s\n", count, os.Getenv("PINECONE_INDEX"))
+	pineconeClient, err := pinecone.NewClient(pinecone.NewClientParams{
+		ApiKey: os.Getenv("PINECONE_API_KEY"),
+	})
+	if err != nil {
+		log.Fatalf("Failed to create pinecone Client: %v", err)
+	}
+	return vectordb.NewPineconeVectorDB(
+		topKResultsNumber,
+		os.Getenv("PINECONE_INDEX"),
+		pineconeClient,
+	)
+
+}
+
+func inputKnowledgeBase(chunker *chunks.Chunker, embedder *embeddings.EmbeddingService, pineconeVectorDB *vectordb.PineconeVectorDB) {
+	textBytes, err := os.ReadFile("./data.md")
+	if err != nil {
+		log.Fatal(err)
+	}
+	text := string(textBytes)
+
+	chunks := chunker.Chunk(text)
+	fmt.Printf("Generated %d chunks\n", len(chunks))
+
+	ctx := context.Background()
+	embeddings, err := embedder.Embed(ctx, chunks)
+	if err != nil {
+		log.Fatalf("Embedding error: %v", err)
+	}
+
+	// Output
+	for i, emb := range embeddings {
+		fmt.Printf("Chunk %d → %d-dim vector\n", i, len(emb))
+	}
+
+	count, err := pineconeVectorDB.StoreEmbeddings(ctx, embeddings)
+	if err != nil {
+		log.Fatalf("Failed to store embeddings: %v", err)
+	}
+
+	fmt.Sprintf("Stored %d embeddings in Pinecone index %s\n", count, os.Getenv("PINECONE_INDEX"))
 }

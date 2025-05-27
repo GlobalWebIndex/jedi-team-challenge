@@ -50,7 +50,7 @@ func (s *Server) initializeRoutes() {
 	chatSessionRepository := repositories.NewChatSessionRepository(s.DB)
 	chatSessionService := services.NewChatSessionService(s.logger, chatSessionRepository)
 	messageRepository := repositories.NewMessageRepository(s.DB)
-	messageService := services.NewMessageService(s.logger, messageRepository, chatSessionRepository)
+	messageService := services.NewMessageService(s.logger, messageRepository, chatSessionRepository, s.embedder, s.pineconeVectorDB, s.openAIClient)
 
 	createChatSessionHandler := chatSessions.NewCreateUserChatSessionHandler(chatSessionService, s.logger)
 	getChatSessionHandler := chatSessions.NewGetChatSessionHandler(chatSessionService, s.logger)

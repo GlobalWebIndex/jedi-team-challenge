@@ -7,14 +7,16 @@ import (
 )
 
 type PineconeVectorDB struct {
-	client *pinecone.Client
-	index  string
+	client            *pinecone.Client
+	index             string
+	topKResultsNumber int
 }
 
-func NewPineconeVectorDB(index string, client *pinecone.Client) *PineconeVectorDB {
+func NewPineconeVectorDB(topKResultsNumber int, index string, client *pinecone.Client) *PineconeVectorDB {
 	return &PineconeVectorDB{
-		index:  index,
-		client: client,
+		topKResultsNumber: topKResultsNumber,
+		index:             index,
+		client:            client,
 	}
 }
 
@@ -60,4 +62,31 @@ func (db *PineconeVectorDB) StoreEmbeddings(ctx context.Context, embeddings [][]
 	}
 
 	return int(count), nil
+}
+
+func (db *PineconeVectorDB) SemanticSearch(ctx context.Context, embeddings []float32) ([]string, error) {
+	idx, err := db.client.DescribeIndex(ctx, db.index)
+	if err != nil {
+		return []string{}, err
+	}
+
+	idxConnection, err := db.client.Index(pinecone.NewIndexConnParams{Host: idx.Host})
+	if err != nil {
+		return []string{}, err
+	}
+
+	res, err := idxConnection.QueryByVectorValues(ctx, &pinecone.QueryByVectorValuesRequest{
+		Vector:          embeddings,
+		TopK:            uint32(db.topKResultsNumber),
+		IncludeValues:   false,
+		IncludeMetadata: true,
+	})
+
+	var contextTexts []string
+	for _, match := range res.Matches {
+		text := match.Vector.Metadata.String()
+		contextTexts = append(contextTexts, text)
+	}
+
+	return contextTexts, nil
 }

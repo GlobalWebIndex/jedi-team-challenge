@@ -4,7 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/gorilla/mux"
+	"github.com/loukaspe/jedi-team-challenge/pkg/embeddings"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
+	"github.com/loukaspe/jedi-team-challenge/pkg/vectordb"
+	"github.com/openai/openai-go"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"net/http"
@@ -15,10 +18,13 @@ import (
 )
 
 type Server struct {
-	DB         *gorm.DB
-	httpServer *http.Server
-	router     *mux.Router
-	logger     logger.LoggerInterface
+	DB               *gorm.DB
+	httpServer       *http.Server
+	router           *mux.Router
+	logger           logger.LoggerInterface
+	openAIClient     *openai.Client
+	embedder         *embeddings.EmbeddingService
+	pineconeVectorDB *vectordb.PineconeVectorDB
 }
 
 func NewServer(
@@ -26,13 +32,18 @@ func NewServer(
 	router *mux.Router,
 	httpServer *http.Server,
 	logger logger.LoggerInterface,
-
+	openAIClient *openai.Client,
+	embedder *embeddings.EmbeddingService,
+	pineconeVectorDB *vectordb.PineconeVectorDB,
 ) *Server {
 	return &Server{
-		DB:         db,
-		router:     router,
-		httpServer: httpServer,
-		logger:     logger,
+		DB:               db,
+		router:           router,
+		httpServer:       httpServer,
+		logger:           logger,
+		openAIClient:     openAIClient,
+		embedder:         embedder,
+		pineconeVectorDB: pineconeVectorDB,
 	}
 }
 

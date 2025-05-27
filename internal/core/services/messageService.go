@@ -2,11 +2,15 @@ package services
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/ports"
 	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
+	"github.com/openai/openai-go"
+	"strings"
 )
 
 type MessageServiceInterface interface {
@@ -14,21 +18,38 @@ type MessageServiceInterface interface {
 	GetAnswerForMessage(context.Context, uuid.UUID) (*domain.Message, error)
 }
 
+type Embedder interface {
+	Embed(ctx context.Context, inputs []string) ([][]float64, error)
+}
+
+type VectorDB interface {
+	SemanticSearch(ctx context.Context, embeddings []float32) ([]string, error)
+}
+
 type MessageService struct {
 	logger                logger.LoggerInterface
 	messageRepository     ports.MessageRepositoryInterface
 	chatSessionRepository ports.ChatSessionRepositoryInterface
+	embedder              Embedder
+	vectorDB              VectorDB
+	openAIClient          *openai.Client
 }
 
 func NewMessageService(
 	logger logger.LoggerInterface,
 	messageRepositoryInterface ports.MessageRepositoryInterface,
 	chatSessionRepository ports.ChatSessionRepositoryInterface,
+	embedder Embedder,
+	vectorDB VectorDB,
+	openAIClient *openai.Client,
 ) *MessageService {
 	return &MessageService{
 		logger:                logger,
 		messageRepository:     messageRepositoryInterface,
 		chatSessionRepository: chatSessionRepository,
+		embedder:              embedder,
+		vectorDB:              vectorDB,
+		openAIClient:          openAIClient,
 	}
 }
 
@@ -51,14 +72,53 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 		return nil, err
 	}
 
+	embeddings, err := s.embedder.Embed(ctx, []string{
+		initialMessage.Content,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// we only have on text so we only care for the first embedding row
+	vectorToFloat32 := make([]float32, len(embeddings[0]))
+	for i, v := range embeddings[0] {
+		vectorToFloat32[i] = float32(v)
+	}
+
+	accumulatedTextFromSearch, err := s.vectorDB.SemanticSearch(ctx, vectorToFloat32)
+
+	prompt := fmt.Sprintf(`Use the following context to answer the question.
+		Context:
+		%s
+		
+		Question:
+		%s
+		
+		Answer:`,
+		strings.Join(accumulatedTextFromSearch, "\n"),
+		initialMessage.Content,
+	)
+
+	chatCompletion, err := s.openAIClient.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			openai.UserMessage(prompt),
+		},
+	})
+
+	answer := chatCompletion.Choices[0].Message.Content
+
+	if answer == "" {
+		// TODO: mh ta les apierrors
+		return nil, errors.New("received empty response from LLM")
+	}
+
 	replyMessage := &domain.Message{
 		ID:            initialMessageID,
 		ChatSessionID: initialMessage.ChatSessionID,
-		Content:       "This is a mock response from the LLM",
+		Content:       answer,
 		Sender:        "SYSTEM", //TODO: constant
 	}
 
-	//TODO: get from llm
 	insertedMessageID, err := s.messageRepository.CreateMessage(ctx, replyMessage)
 	if err != nil {
 		return nil, err
