@@ -167,28 +167,21 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Sends message to a given chat session and gets response",
-                "summary": "Sends message to a given chat session and gets response",
+                "description": "Submits a feedback to a message",
+                "summary": "Submits a feedback to a message",
                 "parameters": [
                     {
                         "description": "request body",
-                        "name": "SendMessageRequest",
+                        "name": "SubmitFeedbackRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/chatSessions.SendMessageRequest"
+                            "$ref": "#/definitions/chatSessions.SubmitFeedbackRequest"
                         }
                     },
                     {
-                        "type": "integer",
-                        "description": "user id",
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "session id",
-                        "name": "session_id",
+                        "description": "message_id",
+                        "name": "message_id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -200,25 +193,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                            "$ref": "#/definitions/chatSessions.SubmitFeedbackResponse"
                         }
                     },
                     "400": {
                         "description": "Error in message payload",
                         "schema": {
-                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                            "$ref": "#/definitions/chatSessions.SubmitFeedbackResponse"
                         }
                     },
                     "401": {
                         "description": "Authentication error",
                         "schema": {
-                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                            "$ref": "#/definitions/chatSessions.SubmitFeedbackResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                            "$ref": "#/definitions/chatSessions.SubmitFeedbackResponse"
                         }
                     }
                 }
@@ -276,7 +269,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "content": {
-                    "description": "UserID    string ` + "`" + `json:\"chatSessionID\"` + "`" + `\nSessionID string ` + "`" + `json:\"sessionId\"` + "`" + `",
                     "type": "string"
                 }
             }
@@ -292,6 +284,22 @@ const docTemplate = `{
                 },
                 "userMessage": {
                     "$ref": "#/definitions/chatSessions.MessageResponse"
+                }
+            }
+        },
+        "chatSessions.SubmitFeedbackRequest": {
+            "type": "object",
+            "properties": {
+                "feedback": {
+                    "type": "string"
+                }
+            }
+        },
+        "chatSessions.SubmitFeedbackResponse": {
+            "type": "object",
+            "properties": {
+                "errorMessage": {
+                    "type": "string"
                 }
             }
         },

@@ -25,16 +25,16 @@ func NewSubmitFeedbackHandler(
 	}
 }
 
-// @Summary		Submits a feedback to a message
-// @Description	Submits a feedback to a message
-// @Security		BearerAuth
-// @Param			SubmitFeedbackRequest	body		SubmitFeedbackRequest	true	"request body"
-// @Param			message_id			body		int					true	"message_id"
-// @Success		201					{object}	SubmitFeedbackResponse
-// @Failure		400					{object}	SubmitFeedbackResponse	"Error in message payload"
-// @Failure		401					{object}	SubmitFeedbackResponse	"Authentication error"
-// @Failure		500					{object}	SubmitFeedbackResponse	"Internal Server Error"
-// @Router			/users/user_id/chat-sessions/session_id/messages [post]
+//	@Summary		Submits a feedback to a message
+//	@Description	Submits a feedback to a message
+//	@Security		BearerAuth
+//	@Param			SubmitFeedbackRequest	body		SubmitFeedbackRequest	true	"request body"
+//	@Param			message_id				body		int						true	"message_id"
+//	@Success		201						{object}	SubmitFeedbackResponse
+//	@Failure		400						{object}	SubmitFeedbackResponse	"Error in message payload"
+//	@Failure		401						{object}	SubmitFeedbackResponse	"Authentication error"
+//	@Failure		500						{object}	SubmitFeedbackResponse	"Internal Server Error"
+//	@Router			/users/user_id/chat-sessions/session_id/messages [post]
 func (handler *SubmitFeedbackHandler) SubmitFeedbackController(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

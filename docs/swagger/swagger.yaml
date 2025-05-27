@@ -35,9 +35,6 @@ definitions:
   chatSessions.SendMessageRequest:
     properties:
       content:
-        description: |-
-          UserID    string `json:"chatSessionID"`
-          SessionID string `json:"sessionId"`
         type: string
     type: object
   chatSessions.SendMessageResponse:
@@ -48,6 +45,16 @@ definitions:
         $ref: '#/definitions/chatSessions.MessageResponse'
       userMessage:
         $ref: '#/definitions/chatSessions.MessageResponse'
+    type: object
+  chatSessions.SubmitFeedbackRequest:
+    properties:
+      feedback:
+        type: string
+    type: object
+  chatSessions.SubmitFeedbackResponse:
+    properties:
+      errorMessage:
+        type: string
     type: object
   chatSessions.UserChatSessionsResponse:
     properties:
@@ -155,22 +162,17 @@ paths:
       summary: Creates chat session
   /users/user_id/chat-sessions/session_id/messages:
     post:
-      description: Sends message to a given chat session and gets response
+      description: Submits a feedback to a message
       parameters:
       - description: request body
         in: body
-        name: SendMessageRequest
+        name: SubmitFeedbackRequest
         required: true
         schema:
-          $ref: '#/definitions/chatSessions.SendMessageRequest'
-      - description: user id
-        in: path
-        name: user_id
-        required: true
-        type: integer
-      - description: session id
+          $ref: '#/definitions/chatSessions.SubmitFeedbackRequest'
+      - description: message_id
         in: body
-        name: session_id
+        name: message_id
         required: true
         schema:
           type: integer
@@ -178,22 +180,22 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/chatSessions.SendMessageResponse'
+            $ref: '#/definitions/chatSessions.SubmitFeedbackResponse'
         "400":
           description: Error in message payload
           schema:
-            $ref: '#/definitions/chatSessions.SendMessageResponse'
+            $ref: '#/definitions/chatSessions.SubmitFeedbackResponse'
         "401":
           description: Authentication error
           schema:
-            $ref: '#/definitions/chatSessions.SendMessageResponse'
+            $ref: '#/definitions/chatSessions.SubmitFeedbackResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/chatSessions.SendMessageResponse'
+            $ref: '#/definitions/chatSessions.SubmitFeedbackResponse'
       security:
       - BearerAuth: []
-      summary: Sends message to a given chat session and gets response
+      summary: Submits a feedback to a message
 produces:
 - application/json
 securityDefinitions:
