@@ -13,3 +13,19 @@ func (err ResourceNotFoundErrorWrapper) Error() string {
 func (err ResourceNotFoundErrorWrapper) Unwrap() error {
 	return err.OriginalError
 }
+
+type UserMismatchError struct {
+	chatSessionID string
+	userID        string
+}
+
+func NewUserMismatchError(chatSessionID, userID string) *UserMismatchError {
+	return &UserMismatchError{
+		chatSessionID: chatSessionID,
+		userID:        userID,
+	}
+}
+
+func (err UserMismatchError) Error() string {
+	return "chatSession " + err.chatSessionID + " does not belong to user " + err.userID
+}

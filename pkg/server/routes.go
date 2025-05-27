@@ -49,12 +49,16 @@ func (s *Server) initializeRoutes() {
 
 	chatSessionRepository := repositories.NewChatSessionRepository(s.DB)
 	chatSessionService := services.NewChatSessionService(s.logger, chatSessionRepository)
+	messageRepository := repositories.NewMessageRepository(s.DB)
+	messageService := services.NewMessageService(s.logger, messageRepository, chatSessionRepository)
 
 	createChatSessionHandler := chatSessions.NewCreateUserChatSessionHandler(chatSessionService, s.logger)
 	getChatSessionHandler := chatSessions.NewGetChatSessionHandler(chatSessionService, s.logger)
+	sendMessageHandler := chatSessions.NewSendMessageHandler(messageService, s.logger)
 
-	protected.HandleFunc("/users/{user_id}/chat-sessions", createChatSessionHandler.CreateUserChatSessionAssetController).Methods("POST")
+	protected.HandleFunc("/users/{user_id}/chat-sessions", createChatSessionHandler.CreateUserChatSessionController).Methods("POST")
 	protected.HandleFunc("/users/{user_id}/chat-sessions", getChatSessionHandler.GetUserChatSessionsController).Methods("GET")
+	protected.HandleFunc("/users/{user_id}/chat-sessions/{session_id}/messages", sendMessageHandler.SendMessageController).Methods("POST")
 
 	protected.HandleFunc("/chat-sessions/{session_id}", getChatSessionHandler.GetChatSessionController).Methods("GET")
 
