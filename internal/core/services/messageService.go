@@ -18,6 +18,7 @@ import (
 type MessageServiceInterface interface {
 	CreateMessage(context.Context, uuid.UUID, *domain.Message) (uuid.UUID, error)
 	GetAnswerForMessage(context.Context, uuid.UUID) (*domain.Message, error)
+	UpdateMessageFeedback(context.Context, uuid.UUID, string) error
 }
 
 type Embedder interface {
@@ -66,6 +67,10 @@ func (s MessageService) CreateMessage(ctx context.Context, userID uuid.UUID, mes
 	}
 
 	return s.messageRepository.CreateMessage(ctx, message)
+}
+
+func (s MessageService) UpdateMessageFeedback(ctx context.Context, messageID uuid.UUID, feedback string) error {
+	return s.messageRepository.UpdateMessageFeedback(ctx, messageID, feedback)
 }
 
 func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageID uuid.UUID) (*domain.Message, error) {

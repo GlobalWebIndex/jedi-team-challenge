@@ -35,12 +35,12 @@ for i in {1..3}; do
   fi
 
   # Check if the session creation was successful
-#  if [[ $(echo "$response" | jq -r '.status') == "success" ]]; then
-#    echo "Chat session $i created successfully."
-#  else
-#    echo "Error creating chat session $i."
-#    exit
-#  fi
+  #  if [[ $(echo "$response" | jq -r '.status') == "success" ]]; then
+  #    echo "Chat session $i created successfully."
+  #  else
+  #    echo "Error creating chat session $i."
+  #    exit
+  #  fi
 done
 
 # Step 3: Send the first message
@@ -64,6 +64,8 @@ response_message_3=$(curl -s --location "$BASE_URL/users/$USER_ID/chat-sessions/
   --header "Authorization: Bearer $token" \
   --data "{\"content\":\"$message_content_3\"}")
 
+system_message_id_3=$(echo "$response_message_3" | jq -r '.systemMessage.id')
+
 ## Step 5: Display the responses from sending the messages
 #echo "Message 1 sent to chat session $CHAT_SESSION_ID:"
 #echo "$response_message_1"
@@ -82,3 +84,15 @@ chat_session_response=$(curl -s --location "$BASE_URL/chat-sessions/$CHAT_SESSIO
 # Display the full chat session
 echo "Full Chat Session $CHAT_SESSION_ID:"
 echo "$chat_session_response"
+
+feedback_message="The force is not strong with that message."
+feedback_response=$(curl -s --location --write-out "%{http_code}" --request POST "$BASE_URL/users/$USER_ID/chat-sessions/$CHAT_SESSION_ID/messages/$system_message_id_3/feedback" \
+  --header "Authorization: Bearer $token" \
+  --data "{\"feedback\":\"$feedback_message\"}")
+
+if [ "$feedback_response" -eq 201 ]; then
+  echo "Feedback OK"
+else
+  echo "Error: Feedback submission failed. Status code: $feedback_response"
+  exit 1
+fi

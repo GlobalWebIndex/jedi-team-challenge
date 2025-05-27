@@ -55,10 +55,12 @@ func (s *Server) initializeRoutes() {
 	createChatSessionHandler := chatSessions.NewCreateUserChatSessionHandler(chatSessionService, s.logger)
 	getChatSessionHandler := chatSessions.NewGetChatSessionHandler(chatSessionService, s.logger)
 	sendMessageHandler := chatSessions.NewSendMessageHandler(messageService, s.logger)
+	submitFeedbackHandler := chatSessions.NewSubmitFeedbackHandler(messageService, s.logger)
 
 	protected.HandleFunc("/users/{user_id}/chat-sessions", createChatSessionHandler.CreateUserChatSessionController).Methods("POST")
 	protected.HandleFunc("/users/{user_id}/chat-sessions", getChatSessionHandler.GetUserChatSessionsController).Methods("GET")
 	protected.HandleFunc("/users/{user_id}/chat-sessions/{session_id}/messages", sendMessageHandler.SendMessageController).Methods("POST")
+	protected.HandleFunc("/users/{user_id}/chat-sessions/{session_id}/messages/{message_id}/feedback", submitFeedbackHandler.SubmitFeedbackController).Methods("POST")
 
 	protected.HandleFunc("/chat-sessions/{session_id}", getChatSessionHandler.GetChatSessionController).Methods("GET")
 

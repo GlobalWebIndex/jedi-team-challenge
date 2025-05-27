@@ -20,4 +20,5 @@ type Message struct {
 	Sender        string
 	Content       string
 	CreatedAt     time.Time
+	Feedback      *string
 }

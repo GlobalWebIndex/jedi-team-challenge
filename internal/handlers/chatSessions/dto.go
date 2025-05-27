@@ -75,3 +75,11 @@ type SendMessageResponse struct {
 	SystemMessage *MessageResponse `json:"systemMessage,omitempty"`
 	ErrorMessage  string           `json:"errorMessage,omitempty"`
 }
+
+type SubmitFeedbackRequest struct {
+	Feedback string `json:"feedback"`
+}
+
+type SubmitFeedbackResponse struct {
+	ErrorMessage string `json:"errorMessage,omitempty"`
+}

@@ -70,3 +70,93 @@ func (mr *MockMessageServiceInterfaceMockRecorder) GetAnswerForMessage(arg0, arg
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAnswerForMessage", reflect.TypeOf((*MockMessageServiceInterface)(nil).GetAnswerForMessage), arg0, arg1)
 }
+
+// UpdateMessageFeedback mocks base method.
+func (m *MockMessageServiceInterface) UpdateMessageFeedback(arg0 context.Context, arg1 uuid.UUID, arg2 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateMessageFeedback", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateMessageFeedback indicates an expected call of UpdateMessageFeedback.
+func (mr *MockMessageServiceInterfaceMockRecorder) UpdateMessageFeedback(arg0, arg1, arg2 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateMessageFeedback", reflect.TypeOf((*MockMessageServiceInterface)(nil).UpdateMessageFeedback), arg0, arg1, arg2)
+}
+
+// MockEmbedder is a mock of Embedder interface.
+type MockEmbedder struct {
+	ctrl     *gomock.Controller
+	recorder *MockEmbedderMockRecorder
+}
+
+// MockEmbedderMockRecorder is the mock recorder for MockEmbedder.
+type MockEmbedderMockRecorder struct {
+	mock *MockEmbedder
+}
+
+// NewMockEmbedder creates a new mock instance.
+func NewMockEmbedder(ctrl *gomock.Controller) *MockEmbedder {
+	mock := &MockEmbedder{ctrl: ctrl}
+	mock.recorder = &MockEmbedderMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockEmbedder) EXPECT() *MockEmbedderMockRecorder {
+	return m.recorder
+}
+
+// Embed mocks base method.
+func (m *MockEmbedder) Embed(arg0 context.Context, arg1 []string) ([]*domain.Embeddings, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Embed", arg0, arg1)
+	ret0, _ := ret[0].([]*domain.Embeddings)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Embed indicates an expected call of Embed.
+func (mr *MockEmbedderMockRecorder) Embed(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Embed", reflect.TypeOf((*MockEmbedder)(nil).Embed), arg0, arg1)
+}
+
+// MockVectorDB is a mock of VectorDB interface.
+type MockVectorDB struct {
+	ctrl     *gomock.Controller
+	recorder *MockVectorDBMockRecorder
+}
+
+// MockVectorDBMockRecorder is the mock recorder for MockVectorDB.
+type MockVectorDBMockRecorder struct {
+	mock *MockVectorDB
+}
+
+// NewMockVectorDB creates a new mock instance.
+func NewMockVectorDB(ctrl *gomock.Controller) *MockVectorDB {
+	mock := &MockVectorDB{ctrl: ctrl}
+	mock.recorder = &MockVectorDBMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockVectorDB) EXPECT() *MockVectorDBMockRecorder {
+	return m.recorder
+}
+
+// SemanticSearch mocks base method.
+func (m *MockVectorDB) SemanticSearch(ctx context.Context, embeddings []float32) ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SemanticSearch", ctx, embeddings)
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SemanticSearch indicates an expected call of SemanticSearch.
+func (mr *MockVectorDBMockRecorder) SemanticSearch(ctx, embeddings any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SemanticSearch", reflect.TypeOf((*MockVectorDB)(nil).SemanticSearch), ctx, embeddings)
+}

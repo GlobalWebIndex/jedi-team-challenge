@@ -23,4 +23,5 @@ type Message struct {
 	Sender        string    `gorm:"type:text;not null"`
 	Content       string    `gorm:"type:text;not null"`
 	CreatedAt     time.Time `gorm:"not null"`
+	Feedback      *string   `gorm:"type:text;null"`
 }
