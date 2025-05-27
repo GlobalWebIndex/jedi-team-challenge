@@ -101,7 +101,7 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 
 	accumulatedTextFromSearch, err := s.vectorDB.SemanticSearch(ctx, vectorToFloat32)
 
-	answer, err := s.generateAnswerFromOpenAI(ctx, accumulatedTextFromSearch, initialMessage.Content)
+	answer, err := s.generateAnswerFromOpenAI(ctx, accumulatedTextFromSearch, initialMessage.Content, chatSession.Messages)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 	return replyMessage, nil
 }
 
-func (s *MessageService) generateAnswerFromOpenAI(ctx context.Context, text []string, initialMessage string) (string, error) {
+func (s *MessageService) generateAnswerFromOpenAI(ctx context.Context, text []string, initialMessage string, previousMessages []*domain.Message) (string, error) {
 	prompt := fmt.Sprintf(`Use the following context to answer the question.
 		Context:
 		%s
@@ -135,12 +135,26 @@ func (s *MessageService) generateAnswerFromOpenAI(ctx context.Context, text []st
 		initialMessage,
 	)
 
-	chatCompletion, err := s.openAIClient.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+	completionParams := openai.ChatCompletionNewParams{
 		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.UserMessage(prompt),
 		},
 		Model: openai.ChatModelGPT4_1Nano,
-	})
+	}
+
+	if len(previousMessages) >= 0 {
+		for _, msg := range previousMessages {
+			completionParams.Messages = append(completionParams.Messages, openai.ChatCompletionMessageParamUnion{
+				OfAssistant: &openai.ChatCompletionAssistantMessageParam{
+					Content: openai.ChatCompletionAssistantMessageParamContentUnion{
+						OfString: openai.String(msg.Content),
+					},
+				},
+			})
+		}
+	}
+
+	chatCompletion, err := s.openAIClient.Chat.Completions.New(ctx, completionParams)
 	if err != nil {
 		return "", err
 	}
