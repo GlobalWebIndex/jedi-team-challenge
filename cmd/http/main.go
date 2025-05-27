@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	"github.com/loukaspe/jedi-team-challenge/internal/repositories"
 	"github.com/loukaspe/jedi-team-challenge/pkg/chunks"
 	"github.com/loukaspe/jedi-team-challenge/pkg/embeddings"
@@ -186,7 +187,15 @@ func inputKnowledgeBase(chunker *chunks.Chunker, embedder *embeddings.EmbeddingS
 		fmt.Printf("Chunk %d → %d-dim vector\n", i, len(emb))
 	}
 
-	count, err := pineconeVectorDB.StoreEmbeddings(ctx, embeddings)
+	domainEmbeddings := make([]*domain.Embeddings, 0, len(embeddings))
+	for i, e := range embeddings {
+		domainEmbeddings = append(domainEmbeddings, &domain.Embeddings{
+			Embeddings: e,
+			Text:       chunks[i],
+		})
+	}
+
+	count, err := pineconeVectorDB.StoreEmbeddings(ctx, domainEmbeddings)
 	if err != nil {
 		log.Fatalf("Failed to store embeddings: %v", err)
 	}

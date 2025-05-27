@@ -72,8 +72,8 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 		return nil, err
 	}
 
-	embeddings, err := s.embedder.Embed(ctx, []string{
-		initialMessage.Content,
+	embeddings, err := s.embedder.Embed(context.Background(), []string{
+		"What do you know about Gen Z in Nashville",
 	})
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 		vectorToFloat32[i] = float32(v)
 	}
 
-	accumulatedTextFromSearch, err := s.vectorDB.SemanticSearch(ctx, vectorToFloat32)
+	accumulatedTextFromSearch, err := s.vectorDB.SemanticSearch(context.Background(), vectorToFloat32)
 
 	prompt := fmt.Sprintf(`Use the following context to answer the question.
 		Context:
@@ -99,11 +99,15 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 		initialMessage.Content,
 	)
 
-	chatCompletion, err := s.openAIClient.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+	chatCompletion, err := s.openAIClient.Chat.Completions.New(context.Background(), openai.ChatCompletionNewParams{
 		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.UserMessage(prompt),
 		},
+		Model: openai.ChatModelGPT4o,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	answer := chatCompletion.Choices[0].Message.Content
 

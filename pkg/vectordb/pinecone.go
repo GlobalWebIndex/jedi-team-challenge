@@ -3,7 +3,9 @@ package vectordb
 import (
 	"context"
 	"fmt"
+	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	"github.com/pinecone-io/go-pinecone/v3/pinecone"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type PineconeVectorDB struct {
@@ -20,7 +22,7 @@ func NewPineconeVectorDB(topKResultsNumber int, index string, client *pinecone.C
 	}
 }
 
-func (db *PineconeVectorDB) StoreEmbeddings(ctx context.Context, embeddings [][]float64) (int, error) {
+func (db *PineconeVectorDB) StoreEmbeddings(ctx context.Context, embeddings []*domain.Embeddings) (int, error) {
 	idx, err := db.client.DescribeIndex(ctx, db.index)
 	if err != nil {
 		return 0, err
@@ -32,27 +34,25 @@ func (db *PineconeVectorDB) StoreEmbeddings(ctx context.Context, embeddings [][]
 	}
 
 	vectors := make([]*pinecone.Vector, len(embeddings))
-	for i, vec := range embeddings {
+	for i, embedding := range embeddings {
 		id := fmt.Sprintf("doc1-chunk-%d", i)
 
-		//md, err := structpb.NewStruct(map[string]interface{}{
-		//	"text": chunks[i],
-		//})
-		//if err != nil {
-		//	log.Fatalf("failed to create metadata struct: %v", err)
-		//}
+		md, err := structpb.NewStruct(map[string]interface{}{
+			"text": embeddings[i].Text,
+		})
+		if err != nil {
+			return 0, err
+		}
 
-		vectorToFloat32 := make([]float32, len(vec))
-		for i, v := range vec {
+		vectorToFloat32 := make([]float32, len(embedding.Embeddings))
+		for i, v := range embeddings[i].Embeddings {
 			vectorToFloat32[i] = float32(v)
 		}
 
 		vectors[i] = &pinecone.Vector{
-			Id:     id,
-			Values: &vectorToFloat32,
-			//Metadata: map[string]interface{}{
-			//	"text": chunks[i], // store the original chunk if you want
-			//},
+			Id:       id,
+			Values:   &vectorToFloat32,
+			Metadata: md,
 		}
 	}
 
