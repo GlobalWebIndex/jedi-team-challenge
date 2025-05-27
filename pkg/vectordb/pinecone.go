@@ -13,13 +13,15 @@ type PineconeVectorDB struct {
 	client            *pinecone.Client
 	index             string
 	topKResultsNumber int
+	threshold         float32
 }
 
-func NewPineconeVectorDB(topKResultsNumber int, index string, client *pinecone.Client) *PineconeVectorDB {
+func NewPineconeVectorDB(threshold float32, topKResultsNumber int, index string, client *pinecone.Client) *PineconeVectorDB {
 	return &PineconeVectorDB{
 		topKResultsNumber: topKResultsNumber,
 		index:             index,
 		client:            client,
+		threshold:         threshold,
 	}
 }
 
@@ -83,7 +85,11 @@ func (db *PineconeVectorDB) SemanticSearch(ctx context.Context, embeddings []flo
 	var contextTexts []string
 	for _, match := range res.Matches {
 		text := match.Vector.Metadata.String()
-		contextTexts = append(contextTexts, text)
+		score := match.Score
+
+		if score >= db.threshold {
+			contextTexts = append(contextTexts, text)
+		}
 	}
 
 	return contextTexts, nil
