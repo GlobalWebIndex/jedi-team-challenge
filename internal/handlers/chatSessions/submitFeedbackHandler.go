@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/services"
 	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
@@ -25,16 +26,16 @@ func NewSubmitFeedbackHandler(
 	}
 }
 
-//	@Summary		Submits a feedback to a message
-//	@Description	Submits a feedback to a message
-//	@Security		BearerAuth
-//	@Param			SubmitFeedbackRequest	body		SubmitFeedbackRequest	true	"request body"
-//	@Param			message_id				body		int						true	"message_id"
-//	@Success		201						{object}	SubmitFeedbackResponse
-//	@Failure		400						{object}	SubmitFeedbackResponse	"Error in message payload"
-//	@Failure		401						{object}	SubmitFeedbackResponse	"Authentication error"
-//	@Failure		500						{object}	SubmitFeedbackResponse	"Internal Server Error"
-//	@Router			/users/user_id/chat-sessions/session_id/messages [post]
+// @Summary		Submits a feedback to a message
+// @Description	Submits a feedback to a message
+// @Security		BearerAuth
+// @Param			SubmitFeedbackRequest	body		SubmitFeedbackRequest	true	"request body"
+// @Param			message_id				body		int						true	"message_id"
+// @Success		201						{object}	SubmitFeedbackResponse
+// @Failure		400						{object}	SubmitFeedbackResponse	"Error in message payload"
+// @Failure		401						{object}	SubmitFeedbackResponse	"Authentication error"
+// @Failure		500						{object}	SubmitFeedbackResponse	"Internal Server Error"
+// @Router			/users/user_id/chat-sessions/session_id/messages [post]
 func (handler *SubmitFeedbackHandler) SubmitFeedbackController(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -67,6 +68,52 @@ func (handler *SubmitFeedbackHandler) SubmitFeedbackController(w http.ResponseWr
 		return
 	}
 
+	userIDAsString := mux.Vars(r)["user_id"]
+	if userIDAsString == "" {
+		response.ErrorMessage = "missing user id"
+
+		handler.JsonResponse(w, http.StatusBadRequest, response)
+
+		return
+	}
+
+	userID, err := uuid.Parse(userIDAsString)
+	if err != nil {
+		handler.logger.Error("Error in submitting feedback",
+			map[string]interface{}{
+				"errorMessage": err.Error(),
+			})
+
+		response.ErrorMessage = "malformed message uuid"
+
+		handler.JsonResponse(w, http.StatusBadRequest, response)
+
+		return
+	}
+
+	chatSessionIDAsString := mux.Vars(r)["session_id"]
+	if chatSessionIDAsString == "" {
+		response.ErrorMessage = "missing session id"
+
+		handler.JsonResponse(w, http.StatusBadRequest, response)
+
+		return
+	}
+
+	chatSessionID, err := uuid.Parse(chatSessionIDAsString)
+	if err != nil {
+		handler.logger.Error("Error in submitting feedback",
+			map[string]interface{}{
+				"errorMessage": err.Error(),
+			})
+
+		response.ErrorMessage = "malformed sessio  uuid"
+
+		handler.JsonResponse(w, http.StatusBadRequest, response)
+
+		return
+	}
+
 	err = json.NewDecoder(r.Body).Decode(request)
 	if err != nil {
 		handler.logger.Error("Error in submitting feedback",
@@ -83,8 +130,12 @@ func (handler *SubmitFeedbackHandler) SubmitFeedbackController(w http.ResponseWr
 
 	err = handler.MessageService.UpdateMessageFeedback(
 		ctx,
-		messageID,
-		request.Feedback,
+		&domain.Message{
+			ID:            messageID,
+			Feedback:      &request.Feedback,
+			ChatSessionID: chatSessionID,
+		},
+		userID,
 	)
 
 	if resourceNotFound, ok := err.(customerrors.ResourceNotFoundErrorWrapper); ok {

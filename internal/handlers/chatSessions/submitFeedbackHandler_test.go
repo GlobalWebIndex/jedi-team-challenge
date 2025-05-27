@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	mock_services "github.com/loukaspe/jedi-team-challenge/mocks/mock_internal/core/services"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	"github.com/stretchr/testify/assert"
@@ -57,9 +58,9 @@ func TestUpdateMessageFeedbackHandler_UpdateMessageFeedbackController(t *testing
 			)
 
 			vars := map[string]string{
-				"user_id":         tt.args.userID.String(),
-				"chat_session_id": tt.args.chatSessionID.String(),
-				"message_id":      tt.args.messageID.String(),
+				"user_id":    tt.args.userID.String(),
+				"session_id": tt.args.chatSessionID.String(),
+				"message_id": tt.args.messageID.String(),
 			}
 			mockRequest = mux.SetURLVars(mockRequest, vars)
 
@@ -68,8 +69,12 @@ func TestUpdateMessageFeedbackHandler_UpdateMessageFeedbackController(t *testing
 
 			mockService.EXPECT().UpdateMessageFeedback(
 				gomock.Any(),
-				tt.args.messageID,
-				tt.args.feedback,
+				&domain.Message{
+					ID:            tt.args.messageID,
+					Feedback:      &tt.args.feedback,
+					ChatSessionID: tt.args.chatSessionID,
+				},
+				tt.args.userID,
 			).Return(nil)
 
 			handler := &SubmitFeedbackHandler{

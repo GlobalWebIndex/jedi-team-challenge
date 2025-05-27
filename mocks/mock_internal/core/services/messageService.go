@@ -72,17 +72,17 @@ func (mr *MockMessageServiceInterfaceMockRecorder) GetAnswerForMessage(arg0, arg
 }
 
 // UpdateMessageFeedback mocks base method.
-func (m *MockMessageServiceInterface) UpdateMessageFeedback(arg0 context.Context, arg1 uuid.UUID, arg2 string) error {
+func (m *MockMessageServiceInterface) UpdateMessageFeedback(ctx context.Context, message *domain.Message, userID uuid.UUID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateMessageFeedback", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "UpdateMessageFeedback", ctx, message, userID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateMessageFeedback indicates an expected call of UpdateMessageFeedback.
-func (mr *MockMessageServiceInterfaceMockRecorder) UpdateMessageFeedback(arg0, arg1, arg2 any) *gomock.Call {
+func (mr *MockMessageServiceInterfaceMockRecorder) UpdateMessageFeedback(ctx, message, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateMessageFeedback", reflect.TypeOf((*MockMessageServiceInterface)(nil).UpdateMessageFeedback), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateMessageFeedback", reflect.TypeOf((*MockMessageServiceInterface)(nil).UpdateMessageFeedback), ctx, message, userID)
 }
 
 // MockEmbedder is a mock of Embedder interface.

@@ -18,7 +18,7 @@ import (
 type MessageServiceInterface interface {
 	CreateMessage(context.Context, uuid.UUID, *domain.Message) (uuid.UUID, error)
 	GetAnswerForMessage(context.Context, uuid.UUID) (*domain.Message, error)
-	UpdateMessageFeedback(context.Context, uuid.UUID, string) error
+	UpdateMessageFeedback(ctx context.Context, message *domain.Message, userID uuid.UUID) error
 }
 
 type Embedder interface {
@@ -120,9 +120,14 @@ func (s *MessageService) GetAnswerForMessage(ctx context.Context, initialMessage
 
 	accumulatedTextFromSearch, err := s.vectorDB.SemanticSearch(ctx, vectorToFloat32)
 
-	answer, err := s.generateAnswerFromOpenAI(ctx, accumulatedTextFromSearch, initialMessage.Content, chatSession.Messages)
-	if err != nil {
-		return nil, err
+	var answer string
+	if len(accumulatedTextFromSearch) == 0 {
+		answer = "The force is not strong enough for me to answer that question based on my context."
+	} else {
+		answer, err = s.generateAnswerFromOpenAI(ctx, accumulatedTextFromSearch, initialMessage.Content, chatSession.Messages)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	replyMessage := &domain.Message{
