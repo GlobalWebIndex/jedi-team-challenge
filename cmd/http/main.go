@@ -34,7 +34,7 @@ func main() {
 	embedder := getEmbedder(&client)
 	pineconeVectorDB := getPineconeVectorDB()
 
-	inputKnowledgeBase(chunker, embedder, pineconeVectorDB)
+	inputKnowledgeBase(ctx, chunker, embedder, pineconeVectorDB)
 
 	logger := logger.NewLogger(ctx)
 	router := mux.NewRouter()
