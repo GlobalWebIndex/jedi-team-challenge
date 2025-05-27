@@ -5,6 +5,9 @@ import (
 	"time"
 )
 
+const SYSTEM_SENDER = "SYSTEM"
+const USER_SENDER = "USER"
+
 type ChatSession struct {
 	ID        uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
 	UserID    uuid.UUID `gorm:"type:uuid;not null;index"`

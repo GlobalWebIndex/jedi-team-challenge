@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/services"
+	"github.com/loukaspe/jedi-team-challenge/internal/repositories"
 	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	"net/http"
@@ -109,7 +110,7 @@ func (handler *SendMessageHandler) SendMessageController(w http.ResponseWriter, 
 	domainMessage := &domain.Message{
 		ChatSessionID: chatSessionID,
 		Content:       request.Content,
-		Sender:        "USER", //TODO: hardcode for now, should be set by the user
+		Sender:        repositories.USER_SENDER,
 	}
 
 	insertedUUID, err := handler.MessageService.CreateMessage(

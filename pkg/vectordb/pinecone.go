@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
+	"github.com/loukaspe/jedi-team-challenge/pkg/helpers"
 	"github.com/pinecone-io/go-pinecone/v3/pinecone"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -44,10 +45,7 @@ func (db *PineconeVectorDB) StoreEmbeddings(ctx context.Context, embeddings []*d
 			return 0, err
 		}
 
-		vectorToFloat32 := make([]float32, len(embedding.Embeddings))
-		for i, v := range embeddings[i].Embeddings {
-			vectorToFloat32[i] = float32(v)
-		}
+		vectorToFloat32 := helpers.Float64ToFloat32(embedding.Embeddings)
 
 		vectors[i] = &pinecone.Vector{
 			Id:       id,

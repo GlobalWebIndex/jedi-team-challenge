@@ -11,12 +11,7 @@ import (
 
 const maxEmbeddingRetries = 5
 
-//type Chunker interface {
-//	Chunk(text string) []string
-//}
-
 type EmbeddingService struct {
-	// TODO: exei nohma edw to interface
 	OpenAIClient   *openai.Client
 	EmbeddingModel openai.EmbeddingModel
 }

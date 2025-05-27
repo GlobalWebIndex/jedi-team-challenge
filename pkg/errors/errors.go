@@ -1,4 +1,4 @@
-package apierrors
+package customerrors
 
 type ResourceNotFoundErrorWrapper struct {
 	OriginalError error
