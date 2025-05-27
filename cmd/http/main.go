@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	"github.com/loukaspe/jedi-team-challenge/internal/repositories"
 	"github.com/loukaspe/jedi-team-challenge/pkg/chunks"
 	"github.com/loukaspe/jedi-team-challenge/pkg/embeddings"
@@ -79,12 +78,13 @@ func getDB() *gorm.DB {
 		log.Fatal("cannot migrate user table")
 	}
 
-	// TODO: remove
+	// hardcoded user just for testing purposes
 	admin := repositories.User{
 		ID:       uuid.UUID{0x12, 0x34, 0x56, 0x78},
 		Username: "loukas",
 		Password: "loukastest",
 	}
+
 	fmt.Printf("Seeding user: %s\n", admin.ID)
 	err = db.Debug().Model(&repositories.User{}).Create(&admin).Error
 	if err != nil {
@@ -177,22 +177,9 @@ func inputKnowledgeBase(chunker *chunks.Chunker, embedder *embeddings.EmbeddingS
 	fmt.Printf("Generated %d chunks\n", len(chunks))
 
 	ctx := context.Background()
-	embeddings, err := embedder.Embed(ctx, chunks)
+	domainEmbeddings, err := embedder.Embed(ctx, chunks)
 	if err != nil {
 		log.Fatalf("Embedding error: %v", err)
-	}
-
-	// Output
-	for i, emb := range embeddings {
-		fmt.Printf("Chunk %d → %d-dim vector\n", i, len(emb))
-	}
-
-	domainEmbeddings := make([]*domain.Embeddings, 0, len(embeddings))
-	for i, e := range embeddings {
-		domainEmbeddings = append(domainEmbeddings, &domain.Embeddings{
-			Embeddings: e,
-			Text:       chunks[i],
-		})
 	}
 
 	count, err := pineconeVectorDB.StoreEmbeddings(ctx, domainEmbeddings)
