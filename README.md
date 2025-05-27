@@ -68,7 +68,11 @@ Also you can run the /scripts/e2e.sh script to run all cases of the assignment:
    and might not be the correct ones):
     1. Pinecone for vector database
     2. text-embedding-3-small as embedding model
-    3. Tittoken as a tokenizer with CHUNK_ENCODING_MODEL cl100k_base and MAX_TOKENS_PER_CHUNKS 3000
+    3. Tiktoken as a tokenizer with CHUNK_ENCODING_MODEL cl100k_base and MAX_TOKENS_PER_CHUNKS 3000
+    4. The top 7 results are retrieved from the similarity search in the Vector DB, and there is a threshold of 0.35
+       that rejects the matches with score less than that. If no such matches are found, then the answer is "The force
+       is not strong enough for me to answer that question based on my context."
+    5. For OpenAI model I have chosen "gpt-4.1-nano" which is a nice combination and balance of speed, accuracy and price.
 5. There are swagger definitions in /docs, and examples in /examples that show the usage of the API. And the e2e.sh that
    checks everything.
 
