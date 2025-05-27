@@ -19,5 +19,5 @@ type Message struct {
 	ChatSessionID uuid.UUID
 	Sender        string
 	Content       string
-	Timestamp     time.Time
+	CreatedAt     time.Time
 }

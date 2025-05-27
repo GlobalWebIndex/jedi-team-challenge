@@ -10,22 +10,22 @@ type UserChatSessionsResponse struct {
 }
 
 type ChatSessionResponse struct {
-	ID           string    `json:"id,omitempty"`
-	Title        string    `json:"title,omitempty"`
-	CreatedAt    string    `json:"createdAt,omitempty"`
-	UpdatedAt    string    `json:"updatedAt,omitempty"`
-	Messages     []Message `json:"messages,omitempty"`
-	ErrorMessage string    `json:"errorMessage,omitempty"`
+	ID           string            `json:"id,omitempty"`
+	Title        string            `json:"title,omitempty"`
+	CreatedAt    string            `json:"createdAt,omitempty"`
+	UpdatedAt    string            `json:"updatedAt,omitempty"`
+	Messages     []MessageResponse `json:"messages,omitempty"`
+	ErrorMessage string            `json:"errorMessage,omitempty"`
 }
 
 func ChatSessionResponseFromModel(domainChatSession *domain.ChatSession) *ChatSessionResponse {
-	messages := make([]Message, len(domainChatSession.Messages))
+	messages := make([]MessageResponse, len(domainChatSession.Messages))
 	for i, msg := range domainChatSession.Messages {
-		messages[i] = Message{
+		messages[i] = MessageResponse{
 			ID:        msg.ID.String(),
 			Sender:    msg.Sender,
 			Content:   msg.Content,
-			Timestamp: msg.Timestamp.String(),
+			CreatedAt: msg.CreatedAt.String(),
 		}
 	}
 
@@ -49,11 +49,21 @@ func UserChatSessionsResponseFromModel(domainChatSession []*domain.ChatSession) 
 	}
 }
 
-type Message struct {
-	ID        string `json:"id"`
-	Sender    string `json:"sender" enum:"USER,SYSTEM" example:"USER"`
-	Content   string `json:"content"`
-	Timestamp string `json:"timestamp"`
+type MessageResponse struct {
+	ID           string `json:"id,omitempty"`
+	Sender       string `json:"sender,omitempty" enum:"USER,SYSTEM"`
+	Content      string `json:"content,omitempty"`
+	CreatedAt    string `json:"created_at,omitempty"`
+	ErrorMessage string `json:"errorMessage,omitempty"`
+}
+
+func MessageResponseFromModel(msg *domain.Message) *MessageResponse {
+	return &MessageResponse{
+		ID:        msg.ID.String(),
+		Sender:    msg.Sender,
+		Content:   msg.Content,
+		CreatedAt: msg.CreatedAt.String(),
+	}
 }
 
 //type CreateChatSessionRequest struct {
@@ -61,14 +71,13 @@ type Message struct {
 //}
 
 type SendMessageRequest struct {
-	UserID    string `json:"chatSessionID"`
-	SessionID string `json:"sessionId"`
-	Content   string `json:"content"`
+	//UserID    string `json:"chatSessionID"`
+	//SessionID string `json:"sessionId"`
+	Content string `json:"content"`
 }
 
 type SendMessageResponse struct {
-	Body struct {
-		UserMessage   Message `json:"userMessage"`
-		SystemMessage Message `json:"systemMessage"`
-	}
+	UserMessage   *MessageResponse `json:"userMessage,omitempty"`
+	SystemMessage *MessageResponse `json:"systemMessage,omitempty"`
+	ErrorMessage  string           `json:"errorMessage,omitempty"`
 }

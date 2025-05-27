@@ -72,7 +72,7 @@ func TestCreateUserChatSessionHandler_CreateUserChatSessionController(t *testing
 				ChatSessionService: mockService,
 				logger:             logger,
 			}
-			sut := handler.CreateUserChatSessionAssetController
+			sut := handler.CreateUserChatSessionController
 
 			sut(mockResponseRecorder, mockRequest)
 
@@ -151,7 +151,7 @@ func TestCreateUserChatSessionHandler_CreateUserChatSessionAssetControllerHasBad
 				ChatSessionService: mockService,
 				logger:             logger,
 			}
-			sut := handler.CreateUserChatSessionAssetController
+			sut := handler.CreateUserChatSessionController
 
 			sut(mockResponseRecorder, mockRequest)
 
@@ -239,7 +239,7 @@ func TestCreateUserChatSessionHandler_CreateUserChatSessionAssetControllerHasSer
 				ChatSessionService: mockService,
 				logger:             logger,
 			}
-			sut := handler.CreateUserChatSessionAssetController
+			sut := handler.CreateUserChatSessionController
 
 			sut(mockResponseRecorder, mockRequest)
 

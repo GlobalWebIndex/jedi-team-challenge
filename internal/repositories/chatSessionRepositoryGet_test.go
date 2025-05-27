@@ -56,14 +56,14 @@ func TestChatRepository_GetChatSession(t *testing.T) {
 					ChatSessionID: uuid.UUID{0x12, 0x34, 0x56, 0x78},
 					Sender:        "SYSTEM",
 					Content:       "MAY THE FORCE BE WITH YOU",
-					Timestamp:     time.Time{},
+					CreatedAt:     time.Time{},
 				},
 				{
 					ID:            uuid.UUID{0x052, 0x34, 0x56, 0x58},
 					ChatSessionID: uuid.UUID{0x12, 0x34, 0x56, 0x78},
 					Sender:        "USER",
 					Content:       "2MAY THE FORCE BE WITH YOU2",
-					Timestamp:     time.Time{},
+					CreatedAt:     time.Time{},
 				},
 			},
 			expected: &domain.ChatSession{
@@ -78,14 +78,14 @@ func TestChatRepository_GetChatSession(t *testing.T) {
 						ChatSessionID: uuid.UUID{0x12, 0x34, 0x56, 0x78},
 						Sender:        "SYSTEM",
 						Content:       "MAY THE FORCE BE WITH YOU",
-						Timestamp:     time.Time{},
+						CreatedAt:     time.Time{},
 					},
 					{
 						ID:            uuid.UUID{0x052, 0x34, 0x56, 0x58},
 						ChatSessionID: uuid.UUID{0x12, 0x34, 0x56, 0x78},
 						Sender:        "USER",
 						Content:       "2MAY THE FORCE BE WITH YOU2",
-						Timestamp:     time.Time{},
+						CreatedAt:     time.Time{},
 					},
 				},
 			},
@@ -111,13 +111,13 @@ func TestChatRepository_GetChatSession(t *testing.T) {
 				WithArgs(tt.args.uuid).
 				WillReturnRows(
 					sqlmock.NewRows(
-						[]string{"id", "chat_session_id", "sender", "timestamp", "content"},
+						[]string{"id", "chat_session_id", "sender", "created_at", "content"},
 					).AddRow(
 						tt.mockMessagesReturned[0].ID, tt.mockMessagesReturned[0].ChatSessionID,
-						tt.mockMessagesReturned[0].Sender, tt.mockMessagesReturned[0].Timestamp, tt.mockMessagesReturned[0].Content,
+						tt.mockMessagesReturned[0].Sender, tt.mockMessagesReturned[0].CreatedAt, tt.mockMessagesReturned[0].Content,
 					).AddRow(
 						tt.mockMessagesReturned[1].ID, tt.mockMessagesReturned[1].ChatSessionID,
-						tt.mockMessagesReturned[1].Sender, tt.mockMessagesReturned[1].Timestamp, tt.mockMessagesReturned[1].Content,
+						tt.mockMessagesReturned[1].Sender, tt.mockMessagesReturned[1].CreatedAt, tt.mockMessagesReturned[1].Content,
 					),
 				)
 
@@ -248,14 +248,14 @@ func TestChatRepository_GetUserChatSessions(t *testing.T) {
 					ChatSessionID: uuid.UUID{0x32, 0x34, 0x56, 0x78},
 					Sender:        "SYSTEM",
 					Content:       "MAY THE FORCE BE WITH YOU",
-					Timestamp:     time.Time{},
+					CreatedAt:     time.Time{},
 				},
 				{
 					ID:            uuid.UUID{0x052, 0x34, 0x56, 0x58},
 					ChatSessionID: uuid.UUID{0x32, 0x34, 0x56, 0x78},
 					Sender:        "USER",
 					Content:       "2MAY THE FORCE BE WITH YOU2",
-					Timestamp:     time.Time{},
+					CreatedAt:     time.Time{},
 				},
 
 				{
@@ -263,14 +263,14 @@ func TestChatRepository_GetUserChatSessions(t *testing.T) {
 					ChatSessionID: uuid.UUID{0x42, 0x34, 0x56, 0x78},
 					Sender:        "SYSTEM",
 					Content:       "3MAY THE FORCE BE WITH YOU3",
-					Timestamp:     time.Time{},
+					CreatedAt:     time.Time{},
 				},
 				{
 					ID:            uuid.UUID{0x052, 0x34, 0x56, 0x58},
 					ChatSessionID: uuid.UUID{0x42, 0x34, 0x56, 0x78},
 					Sender:        "USER",
 					Content:       "4MAY THE FORCE BE WITH YOU4",
-					Timestamp:     time.Time{},
+					CreatedAt:     time.Time{},
 				},
 			},
 			expected: []*domain.ChatSession{
@@ -286,7 +286,7 @@ func TestChatRepository_GetUserChatSessions(t *testing.T) {
 							ChatSessionID: uuid.UUID{0x32, 0x34, 0x56, 0x78},
 							Sender:        "SYSTEM",
 							Content:       "MAY THE FORCE BE WITH YOU",
-							Timestamp:     time.Time{},
+							CreatedAt:     time.Time{},
 						},
 						{
 
@@ -294,7 +294,7 @@ func TestChatRepository_GetUserChatSessions(t *testing.T) {
 							ChatSessionID: uuid.UUID{0x32, 0x34, 0x56, 0x78},
 							Sender:        "USER",
 							Content:       "2MAY THE FORCE BE WITH YOU2",
-							Timestamp:     time.Time{},
+							CreatedAt:     time.Time{},
 						},
 					},
 				},
@@ -310,14 +310,14 @@ func TestChatRepository_GetUserChatSessions(t *testing.T) {
 							ChatSessionID: uuid.UUID{0x42, 0x34, 0x56, 0x78},
 							Sender:        "SYSTEM",
 							Content:       "3MAY THE FORCE BE WITH YOU3",
-							Timestamp:     time.Time{},
+							CreatedAt:     time.Time{},
 						},
 						{
 							ID:            uuid.UUID{0x052, 0x34, 0x56, 0x58},
 							ChatSessionID: uuid.UUID{0x42, 0x34, 0x56, 0x78},
 							Sender:        "USER",
 							Content:       "4MAY THE FORCE BE WITH YOU4",
-							Timestamp:     time.Time{},
+							CreatedAt:     time.Time{},
 						},
 					},
 				},
@@ -346,19 +346,19 @@ func TestChatRepository_GetUserChatSessions(t *testing.T) {
 				WithArgs(tt.mockChatsReturned[0].ID, tt.mockChatsReturned[1].ID).
 				WillReturnRows(
 					sqlmock.NewRows(
-						[]string{"id", "chat_session_id", "sender", "timestamp", "content"},
+						[]string{"id", "chat_session_id", "sender", "created_at", "content"},
 					).AddRow(
 						tt.mockMessagesReturned[0].ID, tt.mockMessagesReturned[0].ChatSessionID,
-						tt.mockMessagesReturned[0].Sender, tt.mockMessagesReturned[0].Timestamp, tt.mockMessagesReturned[0].Content,
+						tt.mockMessagesReturned[0].Sender, tt.mockMessagesReturned[0].CreatedAt, tt.mockMessagesReturned[0].Content,
 					).AddRow(
 						tt.mockMessagesReturned[1].ID, tt.mockMessagesReturned[1].ChatSessionID,
-						tt.mockMessagesReturned[1].Sender, tt.mockMessagesReturned[1].Timestamp, tt.mockMessagesReturned[1].Content,
+						tt.mockMessagesReturned[1].Sender, tt.mockMessagesReturned[1].CreatedAt, tt.mockMessagesReturned[1].Content,
 					).AddRow(
 						tt.mockMessagesReturned[2].ID, tt.mockMessagesReturned[2].ChatSessionID,
-						tt.mockMessagesReturned[2].Sender, tt.mockMessagesReturned[2].Timestamp, tt.mockMessagesReturned[2].Content,
+						tt.mockMessagesReturned[2].Sender, tt.mockMessagesReturned[2].CreatedAt, tt.mockMessagesReturned[2].Content,
 					).AddRow(
 						tt.mockMessagesReturned[3].ID, tt.mockMessagesReturned[3].ChatSessionID,
-						tt.mockMessagesReturned[3].Sender, tt.mockMessagesReturned[3].Timestamp, tt.mockMessagesReturned[3].Content,
+						tt.mockMessagesReturned[3].Sender, tt.mockMessagesReturned[3].CreatedAt, tt.mockMessagesReturned[3].Content,
 					),
 				)
 

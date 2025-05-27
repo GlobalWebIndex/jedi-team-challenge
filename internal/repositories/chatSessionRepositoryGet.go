@@ -39,7 +39,7 @@ func (repo *ChatSessionRepository) GetChatSession(
 			ChatSessionID: msg.ChatSessionID,
 			Sender:        msg.Sender,
 			Content:       msg.Content,
-			Timestamp:     msg.Timestamp,
+			CreatedAt:     msg.CreatedAt,
 		}
 	}
 
@@ -86,7 +86,7 @@ func (repo *ChatSessionRepository) GetUserChatSessions(
 				ChatSessionID: msg.ChatSessionID,
 				Sender:        msg.Sender,
 				Content:       msg.Content,
-				Timestamp:     msg.Timestamp,
+				CreatedAt:     msg.CreatedAt,
 			}
 		}
 

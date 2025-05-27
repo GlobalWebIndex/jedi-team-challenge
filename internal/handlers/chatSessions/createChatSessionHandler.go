@@ -35,7 +35,7 @@ func NewCreateUserChatSessionHandler(
 // @Failure		401		{object}	ChatSessionResponse	"Authentication error"
 // @Failure		500		{object}	ChatSessionResponse	"Internal Server Error"
 // @Router			/users/user_id/chat-sessions [post]
-func (handler *CreateUserChatSessionHandler) CreateUserChatSessionAssetController(w http.ResponseWriter, r *http.Request) {
+func (handler *CreateUserChatSessionHandler) CreateUserChatSessionController(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	ctx := r.Context()

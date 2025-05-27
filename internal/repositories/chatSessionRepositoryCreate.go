@@ -29,7 +29,7 @@ func (repo *ChatSessionRepository) CreateChatSession(
 
 	err = repo.db.WithContext(ctx).Create(&modelChat).Error
 	if err != nil {
-		return uuid.UUID{}, err
+		return uuid.Nil, err
 	}
 
 	return modelChat.ID, nil

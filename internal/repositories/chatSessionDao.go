@@ -19,5 +19,5 @@ type Message struct {
 	ChatSessionID uuid.UUID `gorm:"type:uuid;not null;index"`
 	Sender        string    `gorm:"type:text;not null"`
 	Content       string    `gorm:"type:text;not null"`
-	Timestamp     time.Time `gorm:"not null"`
+	CreatedAt     time.Time `gorm:"not null"`
 }
