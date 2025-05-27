@@ -7,7 +7,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/ports"
+	"github.com/loukaspe/jedi-team-challenge/internal/repositories"
 	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	"github.com/loukaspe/jedi-team-challenge/pkg/helpers"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	"github.com/openai/openai-go"
 	"strings"
@@ -19,7 +21,7 @@ type MessageServiceInterface interface {
 }
 
 type Embedder interface {
-	Embed(ctx context.Context, inputs []string) ([][]float64, error)
+	Embed(context.Context, []string) ([]*domain.Embeddings, error)
 }
 
 type VectorDB interface {
@@ -72,55 +74,42 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 		return nil, err
 	}
 
-	embeddings, err := s.embedder.Embed(context.Background(), []string{
-		"What do you know about Gen Z in Nashville",
-	})
+	chatSession, err := s.chatSessionRepository.GetChatSession(ctx, initialMessage.ChatSessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	if chatSession.Title == "" {
+		title, err := s.generateTitleFromOpenAI(initialMessage.Content)
+		if err != nil {
+			return nil, err
+		}
+
+		err = s.chatSessionRepository.UpdateChatSessionTitle(ctx, initialMessage.ChatSessionID, title)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	domainEmbeddings, err := s.embedder.Embed(context.Background(), []string{initialMessage.Content})
 	if err != nil {
 		return nil, err
 	}
 
 	// we only have on text so we only care for the first embedding row
-	vectorToFloat32 := make([]float32, len(embeddings[0]))
-	for i, v := range embeddings[0] {
-		vectorToFloat32[i] = float32(v)
-	}
+	vectorToFloat32 := helpers.Float64ToFloat32(domainEmbeddings[0].Embeddings)
 
 	accumulatedTextFromSearch, err := s.vectorDB.SemanticSearch(context.Background(), vectorToFloat32)
 
-	prompt := fmt.Sprintf(`Use the following context to answer the question.
-		Context:
-		%s
-		
-		Question:
-		%s
-		
-		Answer:`,
-		strings.Join(accumulatedTextFromSearch, "\n"),
-		initialMessage.Content,
-	)
-
-	chatCompletion, err := s.openAIClient.Chat.Completions.New(context.Background(), openai.ChatCompletionNewParams{
-		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.UserMessage(prompt),
-		},
-		Model: openai.ChatModelGPT4o,
-	})
+	answer, err := s.generateAnswerFromOpenAI(accumulatedTextFromSearch, initialMessage.Content)
 	if err != nil {
 		return nil, err
 	}
 
-	answer := chatCompletion.Choices[0].Message.Content
-
-	if answer == "" {
-		// TODO: mh ta les apierrors
-		return nil, errors.New("received empty response from LLM")
-	}
-
 	replyMessage := &domain.Message{
-		ID:            initialMessageID,
 		ChatSessionID: initialMessage.ChatSessionID,
 		Content:       answer,
-		Sender:        "SYSTEM", //TODO: constant
+		Sender:        repositories.SYSTEM_SENDER,
 	}
 
 	insertedMessageID, err := s.messageRepository.CreateMessage(ctx, replyMessage)
@@ -131,4 +120,60 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 	replyMessage.ID = insertedMessageID
 
 	return replyMessage, nil
+}
+
+func (s *MessageService) generateAnswerFromOpenAI(text []string, initialMessage string) (string, error) {
+	prompt := fmt.Sprintf(`Use the following context to answer the question.
+		Context:
+		%s
+		
+		Question:
+		%s
+		
+		Answer:`,
+		strings.Join(text, "\n"),
+		initialMessage,
+	)
+
+	chatCompletion, err := s.openAIClient.Chat.Completions.New(context.Background(), openai.ChatCompletionNewParams{
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			openai.UserMessage(prompt),
+		},
+		Model: openai.ChatModelGPT4o,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if chatCompletion.Choices[0].Message.Content == "" {
+		return "", errors.New("received empty response from LLM")
+
+	}
+
+	return chatCompletion.Choices[0].Message.Content, nil
+}
+
+func (s *MessageService) generateTitleFromOpenAI(initialMessage string) (string, error) {
+	prompt := fmt.Sprintf(`Summarize the following user message into a short, descriptive chat title (max 5 words):
+		%s
+		Answer:`,
+		initialMessage,
+	)
+
+	chatCompletion, err := s.openAIClient.Chat.Completions.New(context.Background(), openai.ChatCompletionNewParams{
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			openai.UserMessage(prompt),
+		},
+		Model: openai.ChatModelGPT4o,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if chatCompletion.Choices[0].Message.Content == "" {
+		return "", errors.New("received empty response from LLM")
+
+	}
+
+	return chatCompletion.Choices[0].Message.Content, nil
 }

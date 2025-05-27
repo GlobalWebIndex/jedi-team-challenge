@@ -25,15 +25,15 @@ func NewGetChatSessionHandler(
 	}
 }
 
-//	@Summary		Gets all User's chat sessions
-//	@Description	Gets all User's chat sessions
-//	@Security		BearerAuth
-//	@Param			user_id	path		int	true	"user id"
-//	@Success		201		{object}	UserChatSessionsResponse
-//	@Failure		400		{object}	UserChatSessionsResponse	"Error in message payload"
-//	@Failure		401		{object}	UserChatSessionsResponse	"Authentication error"
-//	@Failure		500		{object}	UserChatSessionsResponse	"Internal Server Error"
-//	@Router			/users/user_id/chat-sessions [get]
+// @Summary		Gets all User's chat sessions
+// @Description	Gets all User's chat sessions
+// @Security		BearerAuth
+// @Param			user_id	path		int	true	"user id"
+// @Success		201		{object}	UserChatSessionsResponse
+// @Failure		400		{object}	UserChatSessionsResponse	"Error in message payload"
+// @Failure		401		{object}	UserChatSessionsResponse	"Authentication error"
+// @Failure		500		{object}	UserChatSessionsResponse	"Internal Server Error"
+// @Router			/users/user_id/chat-sessions [get]
 func (handler *GetChatSessionHandler) GetUserChatSessionsController(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -79,12 +79,12 @@ func (handler *GetChatSessionHandler) GetUserChatSessionsController(w http.Respo
 	}
 
 	if err != nil {
-		handler.logger.Error("Error in getting user's favourite assets",
+		handler.logger.Error("Error in getting user's chat sessions",
 			map[string]interface{}{
 				"errorMessage": err.Error(),
 			})
 
-		response.ErrorMessage = "error in getting user favourite assets"
+		response.ErrorMessage = "error in getting user chat sessions"
 		handler.JsonUserChatSessionResponse(w, http.StatusInternalServerError, response)
 
 		return
@@ -94,15 +94,15 @@ func (handler *GetChatSessionHandler) GetUserChatSessionsController(w http.Respo
 	handler.JsonUserChatSessionResponse(w, http.StatusOK, response)
 }
 
-//	@Summary		Gets chat session
-//	@Description	Gets chat session
-//	@Security		BearerAuth
-//	@Param			session_id	path		int	true	"session id"
-//	@Success		201			{object}	ChatSessionResponse
-//	@Failure		400			{object}	ChatSessionResponse	"Error in message payload"
-//	@Failure		401			{object}	ChatSessionResponse	"Authentication error"
-//	@Failure		500			{object}	ChatSessionResponse	"Internal Server Error"
-//	@Router			/chat-sessions/session_id [get]
+// @Summary		Gets chat session
+// @Description	Gets chat session
+// @Security		BearerAuth
+// @Param			session_id	path		int	true	"session id"
+// @Success		201			{object}	ChatSessionResponse
+// @Failure		400			{object}	ChatSessionResponse	"Error in message payload"
+// @Failure		401			{object}	ChatSessionResponse	"Authentication error"
+// @Failure		500			{object}	ChatSessionResponse	"Internal Server Error"
+// @Router			/chat-sessions/session_id [get]
 func (handler *GetChatSessionHandler) GetChatSessionController(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

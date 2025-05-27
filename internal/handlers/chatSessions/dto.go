@@ -66,13 +66,7 @@ func MessageResponseFromModel(msg *domain.Message) *MessageResponse {
 	}
 }
 
-//type CreateChatSessionRequest struct {
-//	UserID string `json:"chatSessionID"`
-//}
-
 type SendMessageRequest struct {
-	//UserID    string `json:"chatSessionID"`
-	//SessionID string `json:"sessionId"`
 	Content string `json:"content"`
 }
 

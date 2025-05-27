@@ -66,20 +66,6 @@ func (handler *CreateUserChatSessionHandler) CreateUserChatSessionController(w h
 		return
 	}
 
-	//err = json.NewDecoder(r.Body).Decode(chatSessionRequest)
-	//if err != nil {
-	//	handler.logger.Error("Error in creating chat session",
-	//		map[string]interface{}{
-	//			"errorMessage": err.Error(),
-	//		})
-	//
-	//	response.ErrorMessage = "malformed create chat session request"
-	//
-	//	handler.JsonResponse(w, http.StatusBadRequest, response)
-	//
-	//	return
-	//}
-
 	insertedUUID, err := handler.ChatSessionService.CreateChatSession(
 		ctx,
 		&domain.ChatSession{
