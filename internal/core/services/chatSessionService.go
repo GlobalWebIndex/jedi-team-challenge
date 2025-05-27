@@ -13,7 +13,6 @@ type ChatSessionServiceInterface interface {
 	GetUserChatSessions(context.Context, uuid.UUID) ([]*domain.ChatSession, error)
 	CreateChatSession(context.Context, *domain.ChatSession) (uuid.UUID, error)
 	UpdateChatSessionTitle(context.Context, uuid.UUID, string) error
-	DeleteChatSession(context.Context, uuid.UUID) error
 }
 
 type ChatSessionService struct {
@@ -37,10 +36,6 @@ func (s ChatSessionService) CreateChatSession(ctx context.Context, session *doma
 
 func (s ChatSessionService) UpdateChatSessionTitle(ctx context.Context, uuid uuid.UUID, title string) error {
 	return s.repository.UpdateChatSessionTitle(ctx, uuid, title)
-}
-
-func (s ChatSessionService) DeleteChatSession(ctx context.Context, uuid uuid.UUID) error {
-	return s.repository.DeleteChatSession(ctx, uuid)
 }
 
 func (s ChatSessionService) GetChatSession(ctx context.Context, uuid uuid.UUID) (*domain.ChatSession, error) {

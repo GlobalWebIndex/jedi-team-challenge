@@ -56,20 +56,6 @@ func (mr *MockChatSessionServiceInterfaceMockRecorder) CreateChatSession(arg0, a
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateChatSession", reflect.TypeOf((*MockChatSessionServiceInterface)(nil).CreateChatSession), arg0, arg1)
 }
 
-// DeleteChatSession mocks base method.
-func (m *MockChatSessionServiceInterface) DeleteChatSession(arg0 context.Context, arg1 uuid.UUID) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteChatSession", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteChatSession indicates an expected call of DeleteChatSession.
-func (mr *MockChatSessionServiceInterfaceMockRecorder) DeleteChatSession(arg0, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteChatSession", reflect.TypeOf((*MockChatSessionServiceInterface)(nil).DeleteChatSession), arg0, arg1)
-}
-
 // GetChatSession mocks base method.
 func (m *MockChatSessionServiceInterface) GetChatSession(arg0 context.Context, arg1 uuid.UUID) (*domain.ChatSession, error) {
 	m.ctrl.T.Helper()
