@@ -8,7 +8,7 @@ import (
 	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/ports"
 	"github.com/loukaspe/jedi-team-challenge/internal/repositories"
-	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"github.com/loukaspe/jedi-team-challenge/pkg/helpers"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	"github.com/openai/openai-go"
@@ -56,24 +56,38 @@ func NewMessageService(
 	}
 }
 
-func (s MessageService) CreateMessage(ctx context.Context, userID uuid.UUID, message *domain.Message) (uuid.UUID, error) {
+func (s *MessageService) CreateMessage(ctx context.Context, userID uuid.UUID, message *domain.Message) (uuid.UUID, error) {
 	chatSession, err := s.chatSessionRepository.GetChatSession(ctx, message.ChatSessionID)
 	if err != nil {
 		return uuid.Nil, err
 	}
 
 	if chatSession.UserID != userID {
-		return uuid.Nil, apierrors.NewUserMismatchError(message.ChatSessionID.String(), userID.String())
+		return uuid.Nil, customerrors.NewUserMismatchError(message.ChatSessionID.String(), userID.String())
 	}
 
 	return s.messageRepository.CreateMessage(ctx, message)
 }
 
-func (s MessageService) UpdateMessageFeedback(ctx context.Context, messageID uuid.UUID, feedback string) error {
-	return s.messageRepository.UpdateMessageFeedback(ctx, messageID, feedback)
+func (s *MessageService) UpdateMessageFeedback(ctx context.Context, message *domain.Message, userID uuid.UUID) error {
+	chatSession, err := s.chatSessionRepository.GetChatSession(ctx, message.ChatSessionID)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.chatSessionRepository.GetChatSession(ctx, message.ChatSessionID)
+	if err != nil {
+		return err
+	}
+
+	if chatSession.UserID != userID {
+		return customerrors.NewUserMismatchError(message.ChatSessionID.String(), userID.String())
+	}
+
+	return s.messageRepository.UpdateMessageFeedback(ctx, message.ID, *message.Feedback)
 }
 
-func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageID uuid.UUID) (*domain.Message, error) {
+func (s *MessageService) GetAnswerForMessage(ctx context.Context, initialMessageID uuid.UUID) (*domain.Message, error) {
 	initialMessage, err := s.messageRepository.GetMessage(ctx, initialMessageID)
 	if err != nil {
 		return nil, err

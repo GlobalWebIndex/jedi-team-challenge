@@ -43,16 +43,13 @@ func (s *EmbeddingService) Embed(ctx context.Context, inputs []string) ([]*domai
 				break
 			}
 
-			// see if it's an APIError with HTTP 429
 			var apiErr *openai.Error
 			if errors.As(err, &apiErr) && apiErr.StatusCode == 429 {
 				wait := time.Duration(math.Pow(2, float64(attempt))) * time.Second
-				// TODO: log
-				fmt.Printf("Rate‐limited on attempt %d: waiting %s before retry…", attempt+1, wait)
 				time.Sleep(wait)
 				continue
 			}
-			// some other error – give up immediately
+
 			return nil, fmt.Errorf("failed embedding: %w", err)
 		}
 

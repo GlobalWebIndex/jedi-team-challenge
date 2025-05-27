@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
-	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +18,7 @@ func (repo *ChatSessionRepository) UpdateChatSessionTitle(
 		Update("title", title).Error
 
 	if err == gorm.ErrRecordNotFound {
-		return apierrors.ResourceNotFoundErrorWrapper{
+		return customerrors.ResourceNotFoundErrorWrapper{
 			OriginalError: errors.New("chatSessionID " + uuid.String() + " not found"),
 		}
 	}

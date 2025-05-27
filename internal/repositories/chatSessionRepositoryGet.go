@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
-	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"gorm.io/gorm"
 )
 
@@ -23,7 +23,7 @@ func (repo *ChatSessionRepository) GetChatSession(
 		Take(&modelChatSession).Error
 
 	if err == gorm.ErrRecordNotFound {
-		return &domain.ChatSession{}, apierrors.ResourceNotFoundErrorWrapper{
+		return &domain.ChatSession{}, customerrors.ResourceNotFoundErrorWrapper{
 			OriginalError: errors.New("chatSessionID " + uuid.String() + " not found"),
 		}
 	}
@@ -67,7 +67,7 @@ func (repo *ChatSessionRepository) GetUserChatSessions(
 		Find(&modelChatSessions).Error
 
 	if err == gorm.ErrRecordNotFound {
-		return []*domain.ChatSession{}, apierrors.ResourceNotFoundErrorWrapper{
+		return []*domain.ChatSession{}, customerrors.ResourceNotFoundErrorWrapper{
 			OriginalError: errors.New("user uuid " + uuid.String() + " not found"),
 		}
 	}

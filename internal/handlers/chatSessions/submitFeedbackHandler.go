@@ -5,7 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/services"
-	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	"net/http"
 )
@@ -87,14 +87,26 @@ func (handler *SubmitFeedbackHandler) SubmitFeedbackController(w http.ResponseWr
 		request.Feedback,
 	)
 
-	if resourceNotFound, ok := err.(apierrors.ResourceNotFoundErrorWrapper); ok {
-		handler.logger.Error("Error in sending message",
+	if resourceNotFound, ok := err.(customerrors.ResourceNotFoundErrorWrapper); ok {
+		handler.logger.Error("Error in submitting feedback",
 			map[string]interface{}{
 				"errorMessage": resourceNotFound.Unwrap(),
 			})
 
 		response.ErrorMessage = err.Error()
 		handler.JsonResponse(w, http.StatusNotFound, response)
+
+		return
+	}
+
+	if userMismatchError, ok := err.(customerrors.UserMismatchError); ok {
+		handler.logger.Error("Error in submitting feedback",
+			map[string]interface{}{
+				"errorMessage": userMismatchError.Error(),
+			})
+
+		response.ErrorMessage = err.Error()
+		handler.JsonResponse(w, http.StatusForbidden, response)
 
 		return
 	}

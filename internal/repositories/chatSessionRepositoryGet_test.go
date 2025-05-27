@@ -6,7 +6,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
-	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -171,7 +171,7 @@ func TestChatRepository_GetChatSessionWithError(t *testing.T) {
 			},
 			mockSqlChatQueryExpected: `SELECT * FROM "chat_sessions" WHERE id = $1 LIMIT $2`,
 			mockSqlErrorReturned:     gorm.ErrRecordNotFound,
-			expectedError: apierrors.ResourceNotFoundErrorWrapper{
+			expectedError: customerrors.ResourceNotFoundErrorWrapper{
 				OriginalError: errors.New("chatSessionID 12345678-0000-0000-0000-000000000000 not found"),
 			},
 		},

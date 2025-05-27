@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
-	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"gorm.io/gorm"
 )
 
@@ -21,8 +21,8 @@ func (repo *MessageRepository) UpdateMessageFeedback(
 		Update("feedback", feedback).Error
 
 	if err == gorm.ErrRecordNotFound {
-		// TODO: apierrors
-		return apierrors.ResourceNotFoundErrorWrapper{
+		// TODO: customerrors
+		return customerrors.ResourceNotFoundErrorWrapper{
 			OriginalError: errors.New("messageID " + uuid.String() + " not found"),
 		}
 	}

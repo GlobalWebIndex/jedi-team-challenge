@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/services"
-	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	"net/http"
 )
@@ -72,7 +72,7 @@ func (handler *CreateUserChatSessionHandler) CreateUserChatSessionController(w h
 			UserID: userId,
 		},
 	)
-	if userNotFoundError, ok := err.(apierrors.ResourceNotFoundErrorWrapper); ok {
+	if userNotFoundError, ok := err.(customerrors.ResourceNotFoundErrorWrapper); ok {
 		handler.logger.Error("Error in creating chat session",
 			map[string]interface{}{
 				"errorMessage": userNotFoundError.Unwrap(),

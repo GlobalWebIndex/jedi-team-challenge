@@ -5,7 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/services"
-	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	"net/http"
 )
@@ -66,7 +66,7 @@ func (handler *GetChatSessionHandler) GetUserChatSessionsController(w http.Respo
 	}
 
 	usersChatSessions, err := handler.ChatSessionService.GetUserChatSessions(ctx, userId)
-	if userNotFoundError, ok := err.(apierrors.ResourceNotFoundErrorWrapper); ok {
+	if userNotFoundError, ok := err.(customerrors.ResourceNotFoundErrorWrapper); ok {
 		handler.logger.Error("Error in getting users chat sessions",
 			map[string]interface{}{
 				"errorMessage": userNotFoundError.Unwrap(),
@@ -135,7 +135,7 @@ func (handler *GetChatSessionHandler) GetChatSessionController(w http.ResponseWr
 	}
 
 	chatSession, err := handler.ChatSessionService.GetChatSession(ctx, sessionID)
-	if chatSessionNotFound, ok := err.(apierrors.ResourceNotFoundErrorWrapper); ok {
+	if chatSessionNotFound, ok := err.(customerrors.ResourceNotFoundErrorWrapper); ok {
 		handler.logger.Error("Error in getting chat session",
 			map[string]interface{}{
 				"errorMessage": chatSessionNotFound.Unwrap(),

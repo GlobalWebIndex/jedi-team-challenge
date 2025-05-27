@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
-	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"gorm.io/gorm"
 )
 
@@ -22,7 +22,7 @@ func (repo *MessageRepository) GetMessage(
 		Take(&modelMessage).Error
 
 	if err == gorm.ErrRecordNotFound {
-		return &domain.Message{}, apierrors.ResourceNotFoundErrorWrapper{
+		return &domain.Message{}, customerrors.ResourceNotFoundErrorWrapper{
 			OriginalError: errors.New("messageID " + uuid.String() + " not found"),
 		}
 	}

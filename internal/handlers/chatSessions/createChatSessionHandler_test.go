@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	mock_services "github.com/loukaspe/jedi-team-challenge/mocks/mock_internal/core/services"
-	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
@@ -205,7 +205,7 @@ func TestCreateUserChatSessionHandler_CreateUserChatSessionAssetControllerHasSer
 				userId: uuid.UUID{0x12, 0x34, 0x56, 0x78},
 			},
 			mockServiceInsertedID: uuid.UUID{},
-			mockServiceResponseError: apierrors.ResourceNotFoundErrorWrapper{
+			mockServiceResponseError: customerrors.ResourceNotFoundErrorWrapper{
 				OriginalError: errors.New("user id 667 not found"),
 			},
 			expected: json.RawMessage(`{}

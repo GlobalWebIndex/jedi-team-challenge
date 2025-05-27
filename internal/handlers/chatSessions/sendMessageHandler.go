@@ -7,7 +7,7 @@ import (
 	"github.com/loukaspe/jedi-team-challenge/internal/core/domain"
 	"github.com/loukaspe/jedi-team-challenge/internal/core/services"
 	"github.com/loukaspe/jedi-team-challenge/internal/repositories"
-	apierrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
+	customerrors "github.com/loukaspe/jedi-team-challenge/pkg/errors"
 	"github.com/loukaspe/jedi-team-challenge/pkg/logger"
 	"net/http"
 )
@@ -119,7 +119,7 @@ func (handler *SendMessageHandler) SendMessageController(w http.ResponseWriter, 
 		domainMessage,
 	)
 
-	if resourceNotFound, ok := err.(apierrors.ResourceNotFoundErrorWrapper); ok {
+	if resourceNotFound, ok := err.(customerrors.ResourceNotFoundErrorWrapper); ok {
 		handler.logger.Error("Error in sending message",
 			map[string]interface{}{
 				"errorMessage": resourceNotFound.Unwrap(),
@@ -131,7 +131,7 @@ func (handler *SendMessageHandler) SendMessageController(w http.ResponseWriter, 
 		return
 	}
 
-	if userMismatchError, ok := err.(apierrors.UserMismatchError); ok {
+	if userMismatchError, ok := err.(customerrors.UserMismatchError); ok {
 		handler.logger.Error("Error in sending message",
 			map[string]interface{}{
 				"errorMessage": userMismatchError.Error(),
@@ -158,7 +158,7 @@ func (handler *SendMessageHandler) SendMessageController(w http.ResponseWriter, 
 	domainMessage.ID = insertedUUID
 
 	replyMessage, err := handler.MessageService.GetAnswerForMessage(ctx, insertedUUID)
-	if resourceNotFound, ok := err.(apierrors.ResourceNotFoundErrorWrapper); ok {
+	if resourceNotFound, ok := err.(customerrors.ResourceNotFoundErrorWrapper); ok {
 		handler.logger.Error("Error in replying to message",
 			map[string]interface{}{
 				"errorMessage": resourceNotFound.Unwrap(),
