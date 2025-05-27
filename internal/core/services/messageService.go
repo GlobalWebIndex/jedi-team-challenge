@@ -80,7 +80,7 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 	}
 
 	if chatSession.Title == "" {
-		title, err := s.generateTitleFromOpenAI(initialMessage.Content)
+		title, err := s.generateTitleFromOpenAI(ctx, initialMessage.Content)
 		if err != nil {
 			return nil, err
 		}
@@ -91,7 +91,7 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 		}
 	}
 
-	domainEmbeddings, err := s.embedder.Embed(context.Background(), []string{initialMessage.Content})
+	domainEmbeddings, err := s.embedder.Embed(ctx, []string{initialMessage.Content})
 	if err != nil {
 		return nil, err
 	}
@@ -99,9 +99,9 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 	// we only have on text so we only care for the first embedding row
 	vectorToFloat32 := helpers.Float64ToFloat32(domainEmbeddings[0].Embeddings)
 
-	accumulatedTextFromSearch, err := s.vectorDB.SemanticSearch(context.Background(), vectorToFloat32)
+	accumulatedTextFromSearch, err := s.vectorDB.SemanticSearch(ctx, vectorToFloat32)
 
-	answer, err := s.generateAnswerFromOpenAI(accumulatedTextFromSearch, initialMessage.Content)
+	answer, err := s.generateAnswerFromOpenAI(ctx, accumulatedTextFromSearch, initialMessage.Content)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (s MessageService) GetAnswerForMessage(ctx context.Context, initialMessageI
 	return replyMessage, nil
 }
 
-func (s *MessageService) generateAnswerFromOpenAI(text []string, initialMessage string) (string, error) {
+func (s *MessageService) generateAnswerFromOpenAI(ctx context.Context, text []string, initialMessage string) (string, error) {
 	prompt := fmt.Sprintf(`Use the following context to answer the question.
 		Context:
 		%s
@@ -135,11 +135,11 @@ func (s *MessageService) generateAnswerFromOpenAI(text []string, initialMessage 
 		initialMessage,
 	)
 
-	chatCompletion, err := s.openAIClient.Chat.Completions.New(context.Background(), openai.ChatCompletionNewParams{
+	chatCompletion, err := s.openAIClient.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
 		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.UserMessage(prompt),
 		},
-		Model: openai.ChatModelGPT4o,
+		Model: openai.ChatModelGPT4_1Nano,
 	})
 	if err != nil {
 		return "", err
@@ -153,18 +153,18 @@ func (s *MessageService) generateAnswerFromOpenAI(text []string, initialMessage 
 	return chatCompletion.Choices[0].Message.Content, nil
 }
 
-func (s *MessageService) generateTitleFromOpenAI(initialMessage string) (string, error) {
+func (s *MessageService) generateTitleFromOpenAI(ctx context.Context, initialMessage string) (string, error) {
 	prompt := fmt.Sprintf(`Summarize the following user message into a short, descriptive chat title (max 5 words):
 		%s
 		Answer:`,
 		initialMessage,
 	)
 
-	chatCompletion, err := s.openAIClient.Chat.Completions.New(context.Background(), openai.ChatCompletionNewParams{
+	chatCompletion, err := s.openAIClient.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
 		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.UserMessage(prompt),
 		},
-		Model: openai.ChatModelGPT4o,
+		Model: openai.ChatModelGPT4_1Nano,
 	})
 	if err != nil {
 		return "", err

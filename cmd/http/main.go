@@ -25,6 +25,7 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
 	getEnv()
 
 	encoder := getEncoder()
@@ -35,7 +36,7 @@ func main() {
 
 	inputKnowledgeBase(chunker, embedder, pineconeVectorDB)
 
-	logger := logger.NewLogger(context.Background())
+	logger := logger.NewLogger(ctx)
 	router := mux.NewRouter()
 	httpServer := &http.Server{
 		Addr:    os.Getenv("SERVER_ADDR"),
@@ -152,6 +153,12 @@ func getPineconeVectorDB() *vectordb.PineconeVectorDB {
 		log.Fatal("Cannot read top k results number: ", err)
 	}
 
+	similaritySearchThresholdAsString := os.Getenv("SIMILARITY_SEARCH_THRESHOLD")
+	similaritySearchThreshold, err := strconv.ParseFloat(similaritySearchThresholdAsString, 32)
+	if err != nil {
+		log.Fatal("Cannot read similarity search threshold: ", err)
+	}
+
 	pineconeClient, err := pinecone.NewClient(pinecone.NewClientParams{
 		ApiKey: os.Getenv("PINECONE_API_KEY"),
 	})
@@ -159,6 +166,7 @@ func getPineconeVectorDB() *vectordb.PineconeVectorDB {
 		log.Fatalf("Failed to create pinecone Client: %v", err)
 	}
 	return vectordb.NewPineconeVectorDB(
+		float32(similaritySearchThreshold),
 		topKResultsNumber,
 		os.Getenv("PINECONE_INDEX"),
 		pineconeClient,
@@ -166,7 +174,7 @@ func getPineconeVectorDB() *vectordb.PineconeVectorDB {
 
 }
 
-func inputKnowledgeBase(chunker *chunks.Chunker, embedder *embeddings.EmbeddingService, pineconeVectorDB *vectordb.PineconeVectorDB) {
+func inputKnowledgeBase(ctx context.Context, chunker *chunks.Chunker, embedder *embeddings.EmbeddingService, pineconeVectorDB *vectordb.PineconeVectorDB) {
 	textBytes, err := os.ReadFile("./data.md")
 	if err != nil {
 		log.Fatal(err)
@@ -176,7 +184,6 @@ func inputKnowledgeBase(chunker *chunks.Chunker, embedder *embeddings.EmbeddingS
 	chunks := chunker.Chunk(text)
 	fmt.Printf("Generated %d chunks\n", len(chunks))
 
-	ctx := context.Background()
 	domainEmbeddings, err := embedder.Embed(ctx, chunks)
 	if err != nil {
 		log.Fatalf("Embedding error: %v", err)
