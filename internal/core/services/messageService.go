@@ -138,6 +138,7 @@ func (s *MessageService) generateAnswerFromOpenAI(ctx context.Context, text []st
 	completionParams := openai.ChatCompletionNewParams{
 		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.UserMessage(prompt),
+			openai.SystemMessage("Use only the provided context for answering the question."),
 		},
 		Model: openai.ChatModelGPT4_1Nano,
 	}
