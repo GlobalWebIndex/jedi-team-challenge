@@ -40,9 +40,10 @@ func TestChatRepository_CreateMessage(t *testing.T) {
 					Sender:        "USER",
 					Content:       "ablaabla",
 					CreatedAt:     time.Time{},
+					Feedback:      nil,
 				},
 			},
-			mockSqlMessageQueryExpected:   `INSERT INTO "messages" ("chat_session_id","sender","content","created_at") VALUES ($1,$2,$3,$4) RETURNING "id"`,
+			mockSqlMessageQueryExpected:   `INSERT INTO "messages" ("chat_session_id","sender","content","created_at","feedback") VALUES ($1,$2,$3,$4,$5) RETURNING "id"`,
 			mockInsertedMessageIdReturned: uuid.UUID{0x42, 0x34, 0x56, 0x78},
 			expectedMessageUid:            uuid.UUID{0x42, 0x34, 0x56, 0x78},
 		},
@@ -58,7 +59,7 @@ func TestChatRepository_CreateMessage(t *testing.T) {
 
 			mockDb.ExpectQuery(regexp.QuoteMeta(tt.mockSqlMessageQueryExpected)).
 				WithArgs(
-					tt.args.message.ChatSessionID, tt.args.message.Sender, tt.args.message.Content, sqlmock.AnyArg(),
+					tt.args.message.ChatSessionID, tt.args.message.Sender, tt.args.message.Content, sqlmock.AnyArg(), tt.args.message.Feedback,
 				).
 				WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(tt.mockInsertedMessageIdReturned))
 			mockDb.ExpectCommit()
