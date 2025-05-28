@@ -67,8 +67,8 @@ Also you can run the /scripts/e2e.sh script to run all cases of the assignment:
    studying
    and might not be the correct ones):
     1. Pinecone for vector database
-    2. text-embedding-3-small as embedding model
-    3. Tiktoken as a tokenizer with CHUNK_ENCODING_MODEL cl100k_base and MAX_TOKENS_PER_CHUNKS 3000
+    2. "text-embedding-3-small" as embedding model
+    3. Tiktoken as a tokenizer with CHUNK_ENCODING_MODEL "cl100k_base" and MAX_TOKENS_PER_CHUNKS 3000
     4. The top 7 results are retrieved from the similarity search in the Vector DB, and there is a threshold of 0.35
        that rejects the matches with score less than that. If no such matches are found, then the answer is "The force
        is not strong enough for me to answer that question based on my context."
