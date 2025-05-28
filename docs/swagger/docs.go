@@ -167,6 +167,70 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
+                "description": "Sends message to a given chat session and gets response",
+                "summary": "Sends message to a given chat session and gets response",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "SendMessageRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageRequest"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "user id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "session id",
+                        "name": "session_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in message payload",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/user_id/chat-sessions/session_id/messages/message_id/feedback": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Submits a feedback to a message",
                 "summary": "Submits a feedback to a message",
                 "parameters": [
