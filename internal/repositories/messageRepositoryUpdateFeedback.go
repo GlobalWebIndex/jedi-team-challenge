@@ -21,7 +21,6 @@ func (repo *MessageRepository) UpdateMessageFeedback(
 		Update("feedback", feedback).Error
 
 	if err == gorm.ErrRecordNotFound {
-		// TODO: customerrors
 		return customerrors.ResourceNotFoundErrorWrapper{
 			OriginalError: errors.New("messageID " + uuid.String() + " not found"),
 		}

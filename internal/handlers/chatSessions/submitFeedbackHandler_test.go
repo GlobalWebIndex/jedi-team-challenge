@@ -46,7 +46,6 @@ func TestUpdateMessageFeedbackHandler_UpdateMessageFeedbackController(t *testing
 		},
 	}
 
-	//TODO: user mismatch sto feedback
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRequest := httptest.NewRequest(
