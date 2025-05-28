@@ -57,7 +57,7 @@ Also you can run the `sh /scripts/e2e.sh` script to run all cases of the assignm
 
 ## Notes
 
-1. .env is not pushed to Git, so in order to run the app you need it with secret keys (e.g Pinecone, OpenAI etc)
+1. `/config/.env` and `deployment/.env` are not pushed to Git, so in order to run the app you need them with secret keys (e.g Pinecone, OpenAI etc)
 2. There are three Dockerfile files.
     1. Dockerfile is the normal, production one
     2. Dev.Dockerfile is for setting up a remote debugger Delve
