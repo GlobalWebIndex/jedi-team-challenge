@@ -4,8 +4,9 @@
 
 ## Description
 
-Service that provides a REST API offering creating chat sessions, sending messages, reading the chat session and  
-submitting feedback for a message.
+This service provides a REST API that enables the creation of chat sessions, sending messages, reading chat sessions, 
+and submitting feedback for messages. The responses to the chat messages are generated using a Retrieval-Augmented 
+Generation (RAG) approach, leveraging a provided dataset of GWI data.
 
 ---
 
@@ -16,13 +17,12 @@ submitting feedback for a message.
 * This command will start the app with `localhost` address and `:8080` port (specified in build/Dev.Dockerfile and .env)
 
 Then you can create, get User's chat-sessions, send message and get response from the Knowledge Base (data.md)
-like the examples in /examples directory. To generate the needed Bearer token, please call /token endpoint with
-username = "user"  
-& password = "password" like in the example.
+like the examples in `/examples` directory. To generate the needed Bearer token, please call `/token` endpoint with
+username = "user" & password = "password" like in the example.
 
 This runs the app with "dlv" so that we can also attach a debugger while running.
 
-Also you can run the /scripts/e2e.sh script to run all cases of the assignment:
+Also you can run the `sh /scripts/e2e.sh` script to run all cases of the assignment:
 
 1. It creates a JWT token
 2. It creates three chat sessions for that User
@@ -61,34 +61,40 @@ Also you can run the /scripts/e2e.sh script to run all cases of the assignment:
 2. There are three Dockerfile files.
     1. Dockerfile is the normal, production one
     2. Dev.Dockerfile is for setting up a remote debugger Delve
-    3. Utilities.Dockerfile is for building a docker for "utilities" like running tests,  
-       linting etc
-4. LLM Choices I took: (This is a field that it's a bit unknown for me, so some decision were made with just a little
-   studying
-   and might not be the correct ones):
+    3. Utilities.Dockerfile is for building a docker for "utilities" like running tests, linting etc
+4. LLM Choices (Made with limited knowledge):
     1. Pinecone for vector database
-    2. "text-embedding-3-small" as embedding model
-    3. Tiktoken as a tokenizer with CHUNK_ENCODING_MODEL "cl100k_base" and MAX_TOKENS_PER_CHUNKS 3000
+    2. `text-embedding-3-small` as embedding model
+    3. Tiktoken as a tokenizer with CHUNK_ENCODING_MODEL `cl100k_base` and MAX_TOKENS_PER_CHUNKS `3000`
     4. The top 7 results are retrieved from the similarity search in the Vector DB, and there is a threshold of 0.35
        that rejects the matches with score less than that. If no such matches are found, then the answer is "The force
        is not strong enough for me to answer that question based on my context."
-    5. For OpenAI model I have chosen "gpt-4.1-nano" which is a nice combination and balance of speed, accuracy and price.
-5. There are swagger definitions in /docs, and examples in /examples that show the usage of the API. And the e2e.sh that
+    5. For OpenAI model I have chosen `gpt-4.1-nano` which is a nice combination and balance of speed, accuracy and price.
+5. There are swagger definitions in `/docs`, and examples in `/examples` that show the usage of the API. And the `e2e.sh` that
    checks everything.
+6. My approach for the code structure is the Hexagonal Architecture, more on that https://medium.com/@matiasvarela/hexagonal-architecture-in-go-cfd4e436faa3
 
 ## Known Issues
 
 1. Only happy path tests are created due to time constraints.
 2. JWT mechanism just requires a fake username and password to generate a JWT token and does NOT do
    actual login due to lack of time. Also no test created for it. Also, the user_id that exists in the endpoint should
-   come
-   the JWT directly.
+   come the JWT directly.
 3. In my implementation, when inputing the Chat History from the Messages DB, I import all messages to OpenAI so that
-   the
-   discussion gets continued. In a production env, I would not do that, but put a limit to the number of messages read
-   from
-   history, as there might be a lot of messages.
+   the discussion gets continued. In a production env, I would not do that, but put a limit to the number of messages read
+   from history, as there might be a lot of messages.
 
 ## Security
 
 1. JWT mechanism added for Authentication and Authorization (incomplete - see Known Issues)
+
+## Libraries and Tools
+
+1. github.com/gorilla/mux for routing
+2. gorm.io/gorm as ORM for my PostgreSQL DB
+3. github.com/golang-jwt/jwt/v4 for the JWT token handling
+4. github.com/openai/openai-go for communicating with OpenAI
+5. github.com/pinecone-io/go-pinecone/v3 for Pinecone Vector DB
+6. github.com/pkoukk/tiktoken-go for tokenizer
+7. github.com/swaggo/swag for Swagger definition
+8. github.com/stretchr/testify & go.uber.org/mock & github.com/DATA-DOG/go-sqlmock for testing
