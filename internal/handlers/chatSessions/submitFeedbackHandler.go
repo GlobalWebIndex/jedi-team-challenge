@@ -35,7 +35,7 @@ func NewSubmitFeedbackHandler(
 // @Failure		400						{object}	SubmitFeedbackResponse	"Error in message payload"
 // @Failure		401						{object}	SubmitFeedbackResponse	"Authentication error"
 // @Failure		500						{object}	SubmitFeedbackResponse	"Internal Server Error"
-// @Router			/users/user_id/chat-sessions/session_id/messages [post]
+// @Router			/users/user_id/chat-sessions/session_id/messages/message_id/feedback [post]
 func (handler *SubmitFeedbackHandler) SubmitFeedbackController(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
