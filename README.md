@@ -83,6 +83,8 @@ Also you can run the `sh /scripts/e2e.sh` script to run all cases of the assignm
 3. In my implementation, when inputing the Chat History from the Messages DB, I import all messages to OpenAI so that
    the discussion gets continued. In a production env, I would not do that, but put a limit to the number of messages read
    from history, as there might be a lot of messages.
+4. For performance increase, we can put indices in the DB, on the foreign keys so that the fetch in the GET
+   endpoints is faster.
 
 ## Security
 
