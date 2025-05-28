@@ -70,6 +70,7 @@ Also you can run the `sh /scripts/e2e.sh` script to run all cases of the assignm
        that rejects the matches with score less than that. If no such matches are found, then the answer is "The force
        is not strong enough for me to answer that question based on my context."
     5. For OpenAI model I have chosen `gpt-4.1-nano` which is a nice combination and balance of speed, accuracy and price.
+    6. I've put a rate limiter when calling OpenAI because at times I was having 429 Many Request response. 
 5. There are swagger definitions in `/docs`, and examples in `/examples` that show the usage of the API. And the `e2e.sh` that
    checks everything.
 6. My approach for the code structure is the Hexagonal Architecture, more on that https://medium.com/@matiasvarela/hexagonal-architecture-in-go-cfd4e436faa3

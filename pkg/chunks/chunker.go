@@ -10,8 +10,6 @@ type Chunker struct {
 	MaxTokensPerChunk int
 }
 
-// TiktokenEncoding  string
-// enc, err := tiktoken.GetEncoding(encName)
 func NewChunker(encoder *tiktoken.Tiktoken, maxTokens int) (*Chunker, error) {
 	return &Chunker{Encoder: encoder, MaxTokensPerChunk: maxTokens}, nil
 }
@@ -66,7 +64,7 @@ func splitToSentences(text string) []string {
 			sb.Reset()
 		}
 	}
-	// leftover
+
 	if rem := strings.TrimSpace(sb.String()); rem != "" {
 		sents = append(sents, rem)
 	}
