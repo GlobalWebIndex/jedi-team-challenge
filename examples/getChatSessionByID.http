@@ -1,0 +1,7 @@
+# curl --location 'localhost:8080/chat-sessions/3ee356a1-640c-44f8-b8d5-a0040385da77'
+#--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNzQ4MzUxODc0LCJVc2VySW5mbyI6eyJVc2VybmFtZSI6InVzZXIiLCJQYXNzd29yZCI6InBhc3N3b3JkIn19.U_aeQ2PCjSnUCnOUy80k8QELoOIIquLOUVpm_6hmVs8'
+GET localhost:8080/chat-sessions/3ee356a1-640c-44f8-b8d5-a0040385da77
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNzQ4MzUxODc0LCJVc2VySW5mbyI6eyJVc2VybmFtZSI6InVzZXIiLCJQYXNzd29yZCI6InBhc3N3b3JkIn19.U_aeQ2PCjSnUCnOUy80k8QELoOIIquLOUVpm_6hmVs8
+
+###
+

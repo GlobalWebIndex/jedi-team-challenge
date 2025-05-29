@@ -1,0 +1,18 @@
+###
+
+# curl --location 'localhost:8080/users/12345678-0000-0000-0000-000000000000/chat-sessions/8d010ba8-5761-42ec-9442-7b6fcc19280e/messages/c4dca9d2-3c73-4356-897f-75791d43ca39'
+#--header 'Content-Type: application/json'
+#--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNzQ4Mzc4NjgzLCJVc2VySW5mbyI6eyJVc2VybmFtZSI6InVzZXIiLCJQYXNzd29yZCI6InBhc3N3b3JkIn19.Nf7TCuFTbyqapG3IIiN9j9f4oMVI1ANv14aP9BV44l4'
+#--data '{
+#    "feedback":"abla"
+#}'
+POST localhost:8080/users/12345678-0000-0000-0000-000000000000/chat-sessions/8d010ba8-5761-42ec-9442-7b6fcc19280e/messages/c4dca9d2-3c73-4356-897f-75791d43ca39
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNzQ4Mzc4NjgzLCJVc2VySW5mbyI6eyJVc2VybmFtZSI6InVzZXIiLCJQYXNzd29yZCI6InBhc3N3b3JkIn19.Nf7TCuFTbyqapG3IIiN9j9f4oMVI1ANv14aP9BV44l4
+Content-Type: application/json
+
+{
+  "feedback": "abla"
+}
+
+###
+

@@ -1,0 +1,387 @@
+{
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "GWI's Jedi Team Challenge",
+        "title": "Louk Chatwalker",
+        "contact": {
+            "name": "Loukas Peteinaris",
+            "url": "loukas.peteinaris@gmail.com"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/chat-sessions/session_id": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Gets chat session",
+                "summary": "Gets chat session",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "session id",
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in message payload",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/user_id/chat-sessions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Gets all User's chat sessions",
+                "summary": "Gets all User's chat sessions",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.UserChatSessionsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in message payload",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.UserChatSessionsResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.UserChatSessionsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.UserChatSessionsResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a chat session for User",
+                "summary": "Creates chat session",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in message payload",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/user_id/chat-sessions/session_id/messages": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Sends message to a given chat session and gets response",
+                "summary": "Sends message to a given chat session and gets response",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "SendMessageRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageRequest"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "user id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "session id",
+                        "name": "session_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in message payload",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SendMessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/user_id/chat-sessions/session_id/messages/message_id/feedback": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Submits a feedback to a message",
+                "summary": "Submits a feedback to a message",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "SubmitFeedbackRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SubmitFeedbackRequest"
+                        }
+                    },
+                    {
+                        "description": "message_id",
+                        "name": "message_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SubmitFeedbackResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in message payload",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SubmitFeedbackResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SubmitFeedbackResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/chatSessions.SubmitFeedbackResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "chatSessions.ChatSessionResponse": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "errorMessage": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/chatSessions.MessageResponse"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "chatSessions.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "errorMessage": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "sender": {
+                    "type": "string"
+                }
+            }
+        },
+        "chatSessions.SendMessageRequest": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "chatSessions.SendMessageResponse": {
+            "type": "object",
+            "properties": {
+                "errorMessage": {
+                    "type": "string"
+                },
+                "systemMessage": {
+                    "$ref": "#/definitions/chatSessions.MessageResponse"
+                },
+                "userMessage": {
+                    "$ref": "#/definitions/chatSessions.MessageResponse"
+                }
+            }
+        },
+        "chatSessions.SubmitFeedbackRequest": {
+            "type": "object",
+            "properties": {
+                "feedback": {
+                    "type": "string"
+                }
+            }
+        },
+        "chatSessions.SubmitFeedbackResponse": {
+            "type": "object",
+            "properties": {
+                "errorMessage": {
+                    "type": "string"
+                }
+            }
+        },
+        "chatSessions.UserChatSessionsResponse": {
+            "type": "object",
+            "properties": {
+                "errorMessage": {
+                    "type": "string"
+                },
+                "sessions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/chatSessions.ChatSessionResponse"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Header value should be in the form of `Bearer \u003cJWT access token\u003e`",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

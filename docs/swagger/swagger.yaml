@@ -1,0 +1,248 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  chatSessions.ChatSessionResponse:
+    properties:
+      createdAt:
+        type: string
+      errorMessage:
+        type: string
+      id:
+        type: string
+      messages:
+        items:
+          $ref: '#/definitions/chatSessions.MessageResponse'
+        type: array
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  chatSessions.MessageResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      errorMessage:
+        type: string
+      id:
+        type: string
+      sender:
+        type: string
+    type: object
+  chatSessions.SendMessageRequest:
+    properties:
+      content:
+        type: string
+    type: object
+  chatSessions.SendMessageResponse:
+    properties:
+      errorMessage:
+        type: string
+      systemMessage:
+        $ref: '#/definitions/chatSessions.MessageResponse'
+      userMessage:
+        $ref: '#/definitions/chatSessions.MessageResponse'
+    type: object
+  chatSessions.SubmitFeedbackRequest:
+    properties:
+      feedback:
+        type: string
+    type: object
+  chatSessions.SubmitFeedbackResponse:
+    properties:
+      errorMessage:
+        type: string
+    type: object
+  chatSessions.UserChatSessionsResponse:
+    properties:
+      errorMessage:
+        type: string
+      sessions:
+        items:
+          $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: Loukas Peteinaris
+    url: loukas.peteinaris@gmail.com
+  description: GWI's Jedi Team Challenge
+  title: Louk Chatwalker
+  version: "1.0"
+paths:
+  /chat-sessions/session_id:
+    get:
+      description: Gets chat session
+      parameters:
+      - description: session id
+        in: path
+        name: session_id
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "400":
+          description: Error in message payload
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "401":
+          description: Authentication error
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+      security:
+      - BearerAuth: []
+      summary: Gets chat session
+  /users/user_id/chat-sessions:
+    get:
+      description: Gets all User's chat sessions
+      parameters:
+      - description: user id
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/chatSessions.UserChatSessionsResponse'
+        "400":
+          description: Error in message payload
+          schema:
+            $ref: '#/definitions/chatSessions.UserChatSessionsResponse'
+        "401":
+          description: Authentication error
+          schema:
+            $ref: '#/definitions/chatSessions.UserChatSessionsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/chatSessions.UserChatSessionsResponse'
+      security:
+      - BearerAuth: []
+      summary: Gets all User's chat sessions
+    post:
+      description: Creates a chat session for User
+      parameters:
+      - description: user id
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "400":
+          description: Error in message payload
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "401":
+          description: Authentication error
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/chatSessions.ChatSessionResponse'
+      security:
+      - BearerAuth: []
+      summary: Creates chat session
+  /users/user_id/chat-sessions/session_id/messages:
+    post:
+      description: Sends message to a given chat session and gets response
+      parameters:
+      - description: request body
+        in: body
+        name: SendMessageRequest
+        required: true
+        schema:
+          $ref: '#/definitions/chatSessions.SendMessageRequest'
+      - description: user id
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: session id
+        in: body
+        name: session_id
+        required: true
+        schema:
+          type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/chatSessions.SendMessageResponse'
+        "400":
+          description: Error in message payload
+          schema:
+            $ref: '#/definitions/chatSessions.SendMessageResponse'
+        "401":
+          description: Authentication error
+          schema:
+            $ref: '#/definitions/chatSessions.SendMessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/chatSessions.SendMessageResponse'
+      security:
+      - BearerAuth: []
+      summary: Sends message to a given chat session and gets response
+  /users/user_id/chat-sessions/session_id/messages/message_id/feedback:
+    post:
+      description: Submits a feedback to a message
+      parameters:
+      - description: request body
+        in: body
+        name: SubmitFeedbackRequest
+        required: true
+        schema:
+          $ref: '#/definitions/chatSessions.SubmitFeedbackRequest'
+      - description: message_id
+        in: body
+        name: message_id
+        required: true
+        schema:
+          type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/chatSessions.SubmitFeedbackResponse'
+        "400":
+          description: Error in message payload
+          schema:
+            $ref: '#/definitions/chatSessions.SubmitFeedbackResponse'
+        "401":
+          description: Authentication error
+          schema:
+            $ref: '#/definitions/chatSessions.SubmitFeedbackResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/chatSessions.SubmitFeedbackResponse'
+      security:
+      - BearerAuth: []
+      summary: Submits a feedback to a message
+produces:
+- application/json
+securityDefinitions:
+  BearerAuth:
+    description: Header value should be in the form of `Bearer <JWT access token>`
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
